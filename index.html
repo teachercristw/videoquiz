@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interactive Video Quiz</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -21,7 +21,6 @@
         <div class="video-container" id="video-container">
             <video id="html5-player" class="hidden" playsinline></video>
             <div id="youtube-player" class="hidden"></div>
-            
             <div id="fx-container" class="hidden">🎉 Correct! 🎉</div>
         </div>
 
@@ -36,11 +35,12 @@
     <div id="quiz-modal" class="modal-overlay hidden">
         <div class="modal-content quiz-card">
             <h2 id="quiz-question">Question text goes here?</h2>
-            <div id="quiz-options" class="options-grid">
-                </div>
+            
+            <div id="quiz-answer-area"></div>
+            
             <p id="quiz-feedback" class="feedback-text hidden"></p>
             <p id="quiz-hint" class="hint-text hidden"></p>
-            <button id="btn-hint" class="btn secondary small">💡 Need a hint?</button>
+            <button id="btn-hint" class="btn secondary small mt-20">💡 Need a hint?</button>
         </div>
     </div>
 
@@ -50,8 +50,8 @@
         <div class="modal-content">
             <h2>Teacher Access</h2>
             <p>Please enter PIN to continue:</p>
-            <input type="password" id="pin-input" placeholder="****" maxlength="4">
-            <div style="margin-top: 15px;">
+            <input type="password" id="pin-input" placeholder="****">
+            <div class="mt-20">
                 <button id="btn-submit-pin" class="btn primary">Enter</button>
                 <button id="btn-cancel-pin" class="btn secondary">Cancel</button>
             </div>
@@ -61,45 +61,69 @@
 
     <div id="teacher-view" class="container hidden">
         <header class="app-header teacher-header">
-            <h1>⚙️ Teacher Dashboard</h1>
-            <button id="btn-exit-teacher" class="btn danger">Exit to Student View</button>
+            <div>
+                <h1>⚙️ Teacher Dashboard</h1>
+                <p>Changes made here are auto-saved to your browser.</p>
+            </div>
+            <button id="btn-exit-teacher" class="btn primary">Exit & Save Settings</button>
         </header>
 
         <div class="dashboard-grid">
-            <div class="panel">
-                <h3>Video Settings</h3>
-                <label>Video Type:</label>
-                <select id="t-video-type">
-                    <option value="local">Local / Direct URL (HTML5)</option>
-                    <option value="youtube">YouTube</option>
-                </select>
+            <div class="panel card">
+                <div class="card-header">Video & Lesson Settings</div>
+                <div class="card-body">
+                    <label>Video Type:</label>
+                    <select id="t-video-type">
+                        <option value="local">Local / Direct URL (.mp4)</option>
+                        <option value="youtube">YouTube</option>
+                    </select>
 
-                <label>Video Source (URL or File Path):</label>
-                <input type="text" id="t-video-source" placeholder="e.g., assets/myvideo.mp4 or YouTube ID">
-                <small>For YouTube, just enter the video ID (e.g., dQw4w9WgXcQ)</small>
+                    <label>Video Source (URL or File Path):</label>
+                    <input type="text" id="t-video-source" placeholder="e.g., assets/myvideo.mp4 or YouTube ID">
+                    <small>For YouTube, just enter the video ID (e.g., dQw4w9WgXcQ)</small>
 
-                <label>Category:</label>
-                <input type="text" id="t-category">
-
-                <label>Difficulty:</label>
-                <input type="text" id="t-difficulty">
+                    <div class="grid-2-col mt-20">
+                        <div>
+                            <label>Category:</label>
+                            <input type="text" id="t-category">
+                        </div>
+                        <div>
+                            <label>Difficulty:</label>
+                            <input type="text" id="t-difficulty">
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="panel">
-                <h3>Data Management</h3>
-                <button id="btn-export-json" class="btn primary">📥 Export JSON</button>
-                <br><br>
-                <label for="import-json" class="btn secondary">📤 Import JSON</label>
-                <input type="file" id="import-json" accept=".json" class="hidden">
-                <a id="download-anchor" class="hidden"></a>
+            <div class="panel card">
+                <div class="card-header">Security & Backup</div>
+                <div class="card-body">
+                    <label>Teacher PIN Code:</label>
+                    <input type="text" id="t-pin" placeholder="Enter a secure PIN">
+                    
+                    <hr class="divider">
+                    
+                    <label>Backup Data (Optional):</label>
+                    <div class="btn-group mt-10">
+                        <button id="btn-export-json" class="btn primary small">📥 Export File</button>
+                        <label for="import-json" class="btn secondary small">📤 Import File</label>
+                        <input type="file" id="import-json" accept=".json" class="hidden">
+                        <a id="download-anchor" class="hidden"></a>
+                    </div>
+                    <small>Use this to move your lesson to another computer.</small>
+                </div>
             </div>
         </div>
 
-        <div class="panel mt-20">
-            <h3>Questions Manager</h3>
-            <div id="questions-list">
-                </div>
-            <button id="btn-add-question" class="btn primary mt-20">➕ Add New Question</button>
+        <div class="panel card mt-20">
+            <div class="card-header flex-between">
+                <span>Questions Manager</span>
+                <button id="btn-add-question" class="btn primary small">➕ Add Question</button>
+            </div>
+            <div class="card-body">
+                <div id="questions-list">
+                    </div>
+            </div>
         </div>
     </div>
 
