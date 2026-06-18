@@ -31,7 +31,8 @@
         .flex-between { display: flex; justify-content: space-between; align-items: center; }
 
         /* Containers */
-        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+        .teacher-container { max-width: 1200px; margin: 0 auto; padding: 20px; }
 
         /* Header */
         .app-header {
@@ -51,7 +52,7 @@
         video, #youtube-player, #t-youtube-player { width: 100%; height: 100%; border: none; }
 
         /* Controls */
-        .controls { display: flex; justify-content: center; gap: 15px; margin-top: 15px; }
+        .controls { display: flex; justify-content: center; align-items: center; gap: 15px; margin-top: 15px; flex-wrap: wrap; }
 
         .btn {
             font-family: inherit; font-size: 1.2rem; font-weight: 800;
@@ -64,8 +65,9 @@
         .btn.secondary { background-color: var(--secondary); color: #fff; }
         .btn.danger { background-color: var(--danger); color: #fff; }
         .btn.small { font-size: 1rem; padding: 8px 16px; box-shadow: 0 2px 0 rgba(0,0,0,0.15); }
+        .btn-group { display: flex; gap: 10px; }
 
-        /* Quiz Panel (Below Video) */
+        /* Quiz Panel */
         .quiz-panel {
             background: var(--card-bg); padding: 30px; border-radius: 16px;
             margin-top: 20px; border: 4px solid var(--primary);
@@ -76,7 +78,7 @@
         .quiz-panel h2 { font-size: 1.6rem; margin-bottom: 10px; }
         .points-indicator { display: block; color: var(--secondary-hover); font-weight: 800; margin-bottom: 20px; font-size: 1.1rem; }
 
-        /* 2x2 Grid for MCQ */
+        /* MCQ Grid */
         .mcq-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
         .option-btn {
             font-size: 1.2rem; padding: 15px; font-weight: 800;
@@ -87,7 +89,6 @@
         .option-btn.correct { background: var(--primary); color: white; border-color: var(--primary); }
         .option-btn.wrong { background: var(--danger); color: white; border-color: var(--danger); }
 
-        /* Text Inputs for Kids */
         .text-answer-input {
             width: 100%; padding: 15px; font-size: 1.3rem; border: 3px solid var(--border-color);
             border-radius: 12px; margin-bottom: 15px; font-family: inherit; text-align: center;
@@ -96,15 +97,24 @@
         .feedback-text { font-size: 1.4rem; font-weight: 800; margin-top: 20px; }
         .hint-text { margin-top: 15px; font-size: 1.1rem; font-weight: 600; color: #b45309; background: #fef08a; padding: 10px; border-radius: 8px; }
 
-        /* Teacher Dashboard */
-        .teacher-panel { background: #fff; padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 2px solid var(--border-color); }
+        /* Teacher Dashboard Layout */
+        .teacher-layout {
+            display: grid; grid-template-columns: 400px 1fr; gap: 20px; align-items: start;
+        }
+        
+        @media (max-width: 900px) {
+            .teacher-layout { grid-template-columns: 1fr; }
+        }
+
+        .sticky-panel { position: sticky; top: 20px; display: flex; flex-direction: column; gap: 20px; }
+        
+        .teacher-panel { background: #fff; padding: 20px; border-radius: 12px; border: 2px solid var(--border-color); }
         .teacher-panel label { display: block; font-weight: 600; margin-top: 10px; font-size: 0.95rem; }
         .teacher-panel input[type="text"], .teacher-panel input[type="number"], .teacher-panel select {
             width: 100%; padding: 10px; margin-top: 5px; border: 2px solid #cbd5e1;
             border-radius: 8px; font-family: inherit; font-size: 1rem;
         }
         
-        /* Teacher MCQ 2x2 Grid */
         .t-mcq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px dashed #cbd5e1;}
         .t-mcq-item { display: flex; align-items: center; gap: 10px; }
         .t-mcq-item input[type="radio"] { transform: scale(1.5); cursor: pointer; }
@@ -112,17 +122,15 @@
         .q-box { border: 2px solid #e2e8f0; padding: 20px; border-radius: 12px; margin-bottom: 20px; background: #ffffff; }
         .q-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; margin-bottom: 15px; }
 
-        /* Modals */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.6); display: flex; justify-content: center; align-items: center; z-index: 1000;
         }
         .modal-content { background: var(--card-bg); padding: 40px; border-radius: 20px; width: 90%; max-width: 400px; text-align: center; }
 
-        /* Gear Icon */
         .gear-icon {
             position: fixed; bottom: 20px; right: 20px; background: #fff; border: 2px solid #e2e8f0;
-            font-size: 1.5rem; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; opacity: 0.5;
+            font-size: 1.5rem; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; opacity: 0.5; z-index: 500;
         }
         .gear-icon:hover { opacity: 1; }
     </style>
@@ -132,20 +140,22 @@
     <main id="student-view" class="container">
         
         <header class="app-header">
-            <h1 id="app-title">My Video</h1>
+            <h1 id="app-title">My Video Lesson</h1>
             <div class="score-board">
                 <span id="score-display">0</span> ⭐
             </div>
         </header>
 
         <div class="video-container">
-            <video id="html5-player" class="hidden" controls playsinline></video>
+            <video id="html5-player" class="hidden" playsinline></video>
             <div id="youtube-player" class="hidden"></div>
         </div>
 
         <div class="controls">
-            <button id="btn-play" class="btn primary">▶️ Play Video</button>
-            <button id="btn-pause" class="btn secondary">⏸️ Pause Video</button>
+            <button id="btn-rewind" class="btn secondary small">⏪ -2s</button>
+            <button id="btn-play" class="btn primary">▶️ Play</button>
+            <button id="btn-pause" class="btn secondary">⏸️ Pause</button>
+            <button id="btn-forward" class="btn secondary small">⏩ +2s</button>
         </div>
 
         <div id="quiz-area" class="quiz-panel hidden">
@@ -175,16 +185,17 @@
 
     <button id="btn-teacher-login" class="gear-icon">⚙️</button>
 
-    <div id="teacher-view" class="container hidden">
+    <div id="teacher-view" class="teacher-container hidden">
         <header class="app-header flex-between" style="background: #f8fafc; border-color:#cbd5e1;">
             <h1>⚙️ Teacher Dashboard</h1>
             <button id="btn-exit-teacher" class="btn primary">Save & Exit</button>
         </header>
 
-        <div class="teacher-panel">
-            <h3 style="margin-bottom:10px;">1. Video Setup & Preview</h3>
-            <div class="flex-between" style="gap:15px;">
-                <div style="flex:1;">
+        <div class="teacher-layout">
+            
+            <div class="sticky-panel">
+                <div class="teacher-panel">
+                    <h3 style="margin-bottom:10px;">1. Video Setup & Preview</h3>
                     <label>Video Type:</label>
                     <select id="t-video-type">
                         <option value="youtube">YouTube</option>
@@ -192,30 +203,41 @@
                     </select>
                     <label>YouTube ID or MP4 Link:</label>
                     <input type="text" id="t-video-source" placeholder="e.g. dQw4w9WgXcQ">
-                    <button class="btn secondary small mt-10" onclick="loadTeacherVideoPreview()">🔄 Load Preview</button>
-                </div>
-                <div style="flex:1;">
-                    <div class="video-container" style="border:2px solid #cbd5e1;">
+                    <button class="btn secondary small mt-10" onclick="loadTeacherVideoPreview()" style="width:100%;">🔄 Load Preview</button>
+                    
+                    <div class="video-container mt-10" style="border:2px solid #cbd5e1;">
                         <video id="t-html5-player" class="hidden" controls></video>
                         <div id="t-youtube-player" class="hidden"></div>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <div class="teacher-panel">
-            <div class="flex-between">
-                <h3>2. Questions</h3>
-                <button id="btn-add-question" class="btn primary small">➕ Add Question</button>
-            </div>
-            <div id="questions-list" class="mt-20">
+                <div class="teacher-panel">
+                    <h3>2. Security & Backup</h3>
+                    <label>Teacher PIN:</label>
+                    <input type="text" id="t-pin">
+                    
+                    <hr style="margin: 15px 0; border: 0; border-top: 1px solid #cbd5e1;">
+                    
+                    <label>JSON Backup Data:</label>
+                    <div class="btn-group mt-10">
+                        <button id="btn-export-json" class="btn primary small" style="flex:1;">📥 Export JSON</button>
+                        <label for="import-json" class="btn secondary small" style="flex:1; text-align:center; display:block;">📤 Import JSON</label>
+                        <input type="file" id="import-json" accept=".json" class="hidden">
+                        <a id="download-anchor" class="hidden"></a>
+                    </div>
                 </div>
-        </div>
+            </div>
 
-        <div class="teacher-panel">
-            <h3>3. Settings</h3>
-            <label>Teacher PIN:</label>
-            <input type="text" id="t-pin">
+            <div class="teacher-panel" style="background: transparent; border: none; padding: 0;">
+                <div class="flex-between" style="background: #fff; padding: 15px 20px; border-radius: 12px; border: 2px solid var(--border-color); margin-bottom: 20px;">
+                    <h3>3. Questions Manager</h3>
+                    <button id="btn-add-question" class="btn primary small">➕ Add Question Here</button>
+                </div>
+                
+                <div id="questions-list">
+                    </div>
+            </div>
+
         </div>
     </div>
 
@@ -239,7 +261,6 @@
         };
 
         let appData = JSON.parse(localStorage.getItem('quizAppDataKids')) || DEFAULT_DATA;
-        // Fix old data that might not have maxPoints
         appData.questions.forEach(q => { if(!q.maxPoints) q.maxPoints = 10; });
 
         function saveToLocalStorage() { localStorage.setItem('quizAppDataKids', JSON.stringify(appData)); }
@@ -249,7 +270,7 @@
         let answeredQuestions = new Set(); 
         let timeCheckerInterval;
         let activeQuestionIndex = -1;
-        let questionAppearedTime = 0; // For time-based scoring
+        let questionAppearedTime = 0; 
 
         // Players
         let ytPlayer = null;
@@ -277,6 +298,7 @@
             if (appData.videoType === 'local') {
                 if (ytPlayer) ytPlayer.stopVideo();
                 html5Player.src = appData.videoSource;
+                html5Player.controls = true; // Use native controls for local fallback
                 html5Player.classList.remove('hidden');
             } else if (appData.videoType === 'youtube' && isYtApiReady) {
                 html5Player.pause();
@@ -287,7 +309,7 @@
                 } else {
                     ytPlayer = new YT.Player('youtube-player', {
                         videoId: appData.videoSource,
-                        playerVars: { 'controls': 1, 'rel': 0 } // Show controls for kids!
+                        playerVars: { 'controls': 1, 'rel': 0, 'playsinline': 1 }
                     });
                 }
             }
@@ -309,9 +331,7 @@
                 tHtml5Player.pause();
                 document.getElementById('t-youtube-player').classList.remove('hidden');
                 if (ytTeacherPlayer) ytTeacherPlayer.loadVideoById(vSrc);
-                else {
-                    ytTeacherPlayer = new YT.Player('t-youtube-player', { videoId: vSrc, playerVars: {'controls':1} });
-                }
+                else ytTeacherPlayer = new YT.Player('t-youtube-player', { videoId: vSrc, playerVars: {'controls':1} });
             }
         }
 
@@ -328,9 +348,18 @@
 
         function playVideo() { appData.videoType === 'local' ? html5Player.play() : ytPlayer?.playVideo(); }
         function pauseVideo() { appData.videoType === 'local' ? html5Player.pause() : ytPlayer?.pauseVideo(); }
+        function skipTime(seconds) {
+            if (appData.videoType === 'local') {
+                html5Player.currentTime += seconds;
+            } else if (appData.videoType === 'youtube' && ytPlayer) {
+                ytPlayer.seekTo(ytPlayer.getCurrentTime() + seconds, true);
+            }
+        }
 
         document.getElementById('btn-play').addEventListener('click', playVideo);
         document.getElementById('btn-pause').addEventListener('click', pauseVideo);
+        document.getElementById('btn-rewind').addEventListener('click', () => skipTime(-2));
+        document.getElementById('btn-forward').addEventListener('click', () => skipTime(2));
 
         // ==========================================
         // QUIZ LOGIC (KIDS VIEW)
@@ -338,7 +367,6 @@
         function checkVideoTime() {
             const currentTime = getCurrentTime();
             appData.questions.forEach((q, index) => {
-                // Trigger if within 1 second, not answered, and no quiz is currently active
                 if (currentTime >= q.timestamp && currentTime <= q.timestamp + 1 && !answeredQuestions.has(index) && activeQuestionIndex === -1) {
                     triggerQuiz(q, index);
                 }
@@ -346,9 +374,9 @@
         }
 
         function triggerQuiz(q, index) {
-            pauseVideo(); // We pause initially to get their attention, but they can click play right away!
+            pauseVideo(); 
             activeQuestionIndex = index;
-            questionAppearedTime = Date.now(); // Start the timer for points!
+            questionAppearedTime = Date.now(); 
             
             const area = document.getElementById('quiz-area');
             area.classList.remove('hidden');
@@ -393,23 +421,17 @@
         function calculateEarnedPoints() {
             const q = appData.questions[activeQuestionIndex];
             const timeTakenInSeconds = (Date.now() - questionAppearedTime) / 1000;
-            
             let earned = q.maxPoints;
-            
-            // If they took longer than 5 seconds, deduct 1 point every 3 seconds
             if (timeTakenInSeconds > 5) {
                 const penalty = Math.floor((timeTakenInSeconds - 5) / 3);
                 earned = q.maxPoints - penalty;
             }
-            
-            // They always get at least 1 point for a correct answer!
             return Math.max(1, earned); 
         }
 
         function checkAnswer(selectedIndex, btnClicked, correctIndex) {
             const grid = document.querySelector('.mcq-grid');
-            Array.from(grid.children).forEach(b => b.style.pointerEvents = 'none'); // Lock answers
-            
+            Array.from(grid.children).forEach(b => b.style.pointerEvents = 'none'); 
             if (selectedIndex === correctIndex) handleCorrect(btnClicked);
             else handleWrong(btnClicked, grid.children[correctIndex]);
         }
@@ -417,7 +439,6 @@
         function checkTextAnswer(btnElement) {
             const ans = document.getElementById('student-text-input').value.trim();
             const q = appData.questions[activeQuestionIndex];
-            
             if (q.type === 'essay' && ans.length > 0) handleCorrect(null);
             else if (q.type === 'identification' && ans.toLowerCase() === q.correctAnswer.toLowerCase()) handleCorrect(null);
             else handleWrong(null, null);
@@ -425,7 +446,6 @@
 
         function handleCorrect(btnClicked) {
             if(btnClicked) btnClicked.classList.add('correct');
-            
             const earnedPoints = calculateEarnedPoints();
             currentScore += earnedPoints;
             document.getElementById('score-display').textContent = currentScore;
@@ -440,15 +460,11 @@
 
         function handleWrong(btnClicked, correctBtn) {
             if(btnClicked) btnClicked.classList.add('wrong');
-            
             const fb = document.getElementById('quiz-feedback');
             fb.textContent = "Oops! Try again next time. 0 stars.";
             fb.style.color = "var(--danger)";
             fb.classList.remove('hidden');
-
-            // Show them the correct answer so they learn
             if(correctBtn) correctBtn.classList.add('correct'); 
-
             setTimeout(closeQuiz, 3000);
         }
 
@@ -495,6 +511,29 @@
             initVideoPlayer();
         };
 
+        // JSON BACKUP LOGIC
+        document.getElementById('btn-export-json').addEventListener('click', () => {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
+            const dl = document.getElementById('download-anchor');
+            dl.setAttribute("href", dataStr); dl.setAttribute("download", "video-lesson-backup.json"); dl.click();
+        });
+
+        document.getElementById('import-json').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    appData = JSON.parse(e.target.result);
+                    saveToLocalStorage();
+                    alert("Backup imported successfully!");
+                    renderTeacherDashboard();
+                    loadTeacherVideoPreview();
+                } catch(err) { alert("Invalid backup file format."); }
+            };
+            reader.readAsText(file);
+        });
+
         function renderTeacherDashboard() {
             document.getElementById('t-pin').value = appData.pin;
             document.getElementById('t-video-type').value = appData.videoType;
@@ -528,8 +567,8 @@
                         <button class="btn danger small" onclick="deleteQ(${idx})">Delete</button>
                     </div>
                     
-                    <div style="display:flex; gap:10px; align-items:flex-end;">
-                        <div style="flex:1;">
+                    <div style="display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap;">
+                        <div style="flex:1; min-width: 150px;">
                             <label>Type:</label>
                             <select onchange="changeQType(${idx}, this.value)">
                                 <option value="mcq" ${q.type === 'mcq' ? 'selected' : ''}>Multiple Choice</option>
@@ -537,15 +576,15 @@
                                 <option value="essay" ${q.type === 'essay' ? 'selected' : ''}>Any Answer (Essay)</option>
                             </select>
                         </div>
-                        <div style="flex:1;">
-                            <label>Show at (Seconds):</label>
+                        <div style="flex:1; min-width: 100px;">
+                            <label>Show at (Sec):</label>
                             <input type="number" id="ts-${idx}" value="${q.timestamp}" onchange="updateQ(${idx}, 'timestamp', this.value)">
                         </div>
-                        <div style="flex:1;">
+                        <div style="flex:1; min-width: 100px;">
                             <label>Max Points:</label>
                             <input type="number" value="${q.maxPoints || 10}" min="1" onchange="updateQ(${idx}, 'maxPoints', this.value)">
                         </div>
-                        <button class="btn secondary small" onclick="grabTime(${idx})" style="height:42px;">⏱️ Get Time</button>
+                        <button class="btn secondary small" onclick="grabTime(${idx})" style="height:42px; margin-top:5px;">⏱️ Get Time</button>
                     </div>
 
                     <div class="mt-10">
@@ -568,7 +607,6 @@
             const t = getTeacherTime();
             document.getElementById(`ts-${idx}`).value = t;
             updateQ(idx, 'timestamp', t);
-            alert(`Time set to ${t} seconds!`);
         }
 
         window.updateQ = function(idx, field, val) {
@@ -598,7 +636,8 @@
         }
 
         document.getElementById('btn-add-question').onclick = () => {
-            appData.questions.push({ type: "mcq", timestamp: 0, maxPoints: 10, text: "New Question", options: ["1", "2", "3", "4"], correctAnswer: 0, hint: "" });
+            // unshift() adds the new question to the TOP of the array
+            appData.questions.unshift({ type: "mcq", timestamp: 0, maxPoints: 10, text: "New Question", options: ["1", "2", "3", "4"], correctAnswer: 0, hint: "" });
             saveToLocalStorage();
             renderTeacherDashboard();
         }
