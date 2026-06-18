@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Video Quiz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <main id="student-view" class="container">
+        
+        <header class="app-header">
+            <h1 id="app-title">Video Lesson</h1>
+            <div class="score-board">
+                ⭐ Score: <span id="score-display">0</span>
+            </div>
+        </header>
+
+        <div class="video-container" id="video-container">
+            <video id="html5-player" class="hidden" playsinline></video>
+            <div id="youtube-player" class="hidden"></div>
+            
+            <div id="fx-container" class="hidden">🎉 Correct! 🎉</div>
+        </div>
+
+        <div class="controls">
+            <button id="btn-play" class="btn primary">▶️ Play</button>
+            <button id="btn-pause" class="btn secondary">⏸️ Pause</button>
+            <button id="btn-stop" class="btn danger">⏹️ Stop</button>
+        </div>
+
+    </main>
+
+    <div id="quiz-modal" class="modal-overlay hidden">
+        <div class="modal-content quiz-card">
+            <h2 id="quiz-question">Question text goes here?</h2>
+            <div id="quiz-options" class="options-grid">
+                </div>
+            <p id="quiz-feedback" class="feedback-text hidden"></p>
+            <p id="quiz-hint" class="hint-text hidden"></p>
+            <button id="btn-hint" class="btn secondary small">💡 Need a hint?</button>
+        </div>
+    </div>
+
+    <button id="btn-teacher-login" class="gear-icon" title="Teacher Settings">⚙️</button>
+
+    <div id="pin-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2>Teacher Access</h2>
+            <p>Please enter PIN to continue:</p>
+            <input type="password" id="pin-input" placeholder="****" maxlength="4">
+            <div style="margin-top: 15px;">
+                <button id="btn-submit-pin" class="btn primary">Enter</button>
+                <button id="btn-cancel-pin" class="btn secondary">Cancel</button>
+            </div>
+            <p id="pin-error" class="error-text hidden">Incorrect PIN.</p>
+        </div>
+    </div>
+
+    <div id="teacher-view" class="container hidden">
+        <header class="app-header teacher-header">
+            <h1>⚙️ Teacher Dashboard</h1>
+            <button id="btn-exit-teacher" class="btn danger">Exit to Student View</button>
+        </header>
+
+        <div class="dashboard-grid">
+            <div class="panel">
+                <h3>Video Settings</h3>
+                <label>Video Type:</label>
+                <select id="t-video-type">
+                    <option value="local">Local / Direct URL (HTML5)</option>
+                    <option value="youtube">YouTube</option>
+                </select>
+
+                <label>Video Source (URL or File Path):</label>
+                <input type="text" id="t-video-source" placeholder="e.g., assets/myvideo.mp4 or YouTube ID">
+                <small>For YouTube, just enter the video ID (e.g., dQw4w9WgXcQ)</small>
+
+                <label>Category:</label>
+                <input type="text" id="t-category">
+
+                <label>Difficulty:</label>
+                <input type="text" id="t-difficulty">
+            </div>
+
+            <div class="panel">
+                <h3>Data Management</h3>
+                <button id="btn-export-json" class="btn primary">📥 Export JSON</button>
+                <br><br>
+                <label for="import-json" class="btn secondary">📤 Import JSON</label>
+                <input type="file" id="import-json" accept=".json" class="hidden">
+                <a id="download-anchor" class="hidden"></a>
+            </div>
+        </div>
+
+        <div class="panel mt-20">
+            <h3>Questions Manager</h3>
+            <div id="questions-list">
+                </div>
+            <button id="btn-add-question" class="btn primary mt-20">➕ Add New Question</button>
+        </div>
+    </div>
+
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script src="app.js"></script>
+</body>
+</html>
