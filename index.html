@@ -7,18 +7,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
     
     <style>
-        /* Base Variables & Reset */
+        /* Base Variables - Sophisticated Dark Theme */
         :root {
-            --bg-color: #f0f9ff;
-            --primary: #4ade80; 
-            --primary-hover: #22c55e;
-            --secondary: #38bdf8; 
-            --secondary-hover: #0284c7;
-            --danger: #f87171; 
-            --text-main: #334155;
-            --card-bg: #ffffff;
-            --border-color: #e2e8f0;
+            --bg-color: #0f172a;        /* Deep Slate / Black */
+            --card-bg: #1e293b;         /* Dark gray for panels */
+            --text-main: #f8fafc;       /* Off-white text */
+            --text-muted: #94a3b8;      /* Muted gray text */
+            --border-color: #334155;    /* Subtle dark borders */
             --font-main: 'Nunito', sans-serif;
+            
+            /* Distinct Button Colors */
+            --btn-play: #10b981;        /* Green */
+            --btn-pause: #f59e0b;       /* Amber */
+            --btn-rw: #8b5cf6;          /* Purple */
+            --btn-fw: #06b6d4;          /* Cyan */
+            --btn-finish: #6366f1;      /* Indigo */
+            --btn-action: #3b82f6;      /* Blue */
+            --btn-danger: #ef4444;      /* Red */
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -38,100 +43,126 @@
         .app-header {
             display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 20px; background: var(--card-bg); padding: 15px 30px;
-            border-radius: 16px; border: 4px solid #bae6fd; flex-wrap: wrap; gap: 10px;
+            border-radius: 12px; border: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5); flex-wrap: wrap; gap: 10px;
         }
-        h1 { font-size: 1.8rem; color: #0f172a; }
-        .score-board { font-size: 1.6rem; font-weight: 800; color: #eab308; display: flex; align-items: center; gap: 15px; }
+        h1 { font-size: 1.6rem; font-weight: 800; letter-spacing: 0.5px; }
+        .score-board { font-size: 1.4rem; font-weight: 800; color: #fbbf24; display: flex; align-items: center; gap: 15px; }
 
         /* Video Player */
         .video-container {
             position: relative; width: 100%; background: #000;
-            border-radius: 16px; overflow: hidden; aspect-ratio: 16 / 9;
-            border: 4px solid #94a3b8;
+            border-radius: 12px; overflow: hidden; aspect-ratio: 16 / 9;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.7);
         }
         video, #youtube-player, #t-youtube-player { width: 100%; height: 100%; border: none; }
 
         /* Controls */
-        .controls { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
-        .control-group { display: flex; gap: 5px; background: #e0f2fe; padding: 5px; border-radius: 12px; }
+        .controls { display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
+        .control-group { display: flex; gap: 8px; background: #1e293b; padding: 8px; border-radius: 12px; border: 1px solid var(--border-color); }
 
         .btn {
-            font-family: inherit; font-size: 1.2rem; font-weight: 800;
-            padding: 12px 24px; border: none; border-radius: 12px;
-            cursor: pointer; transition: transform 0.1s;
-            box-shadow: 0 4px 0 rgba(0,0,0,0.15);
+            font-family: inherit; font-size: 1.1rem; font-weight: 800;
+            padding: 10px 20px; border: none; border-radius: 8px; color: #fff;
+            cursor: pointer; transition: all 0.15s;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.25); text-shadow: 0 1px 2px rgba(0,0,0,0.3);
         }
         .btn:active { transform: translateY(4px); box-shadow: none; }
-        .btn.primary { background-color: var(--primary); color: #fff; }
-        .btn.secondary { background-color: var(--secondary); color: #fff; }
-        .btn.danger { background-color: var(--danger); color: #fff; }
-        .btn.small { font-size: 1rem; padding: 8px 16px; box-shadow: 0 2px 0 rgba(0,0,0,0.15); }
         
-        .btn.micro { font-size: 0.9rem; padding: 8px 12px; box-shadow: 0 2px 0 rgba(0,0,0,0.15); }
+        /* Colored Buttons */
+        .btn-play { background-color: var(--btn-play); }
+        .btn-play:hover { background-color: #059669; }
+        
+        .btn-pause { background-color: var(--btn-pause); }
+        .btn-pause:hover { background-color: #d97706; }
+        
+        .btn-rw { background-color: var(--btn-rw); }
+        .btn-rw:hover { background-color: #7c3aed; }
+        
+        .btn-fw { background-color: var(--btn-fw); }
+        .btn-fw:hover { background-color: #0891b2; }
+        
+        .btn-finish { background-color: var(--btn-finish); }
+        .btn-finish:hover { background-color: #4f46e5; }
+        
+        .btn-action { background-color: var(--btn-action); }
+        .btn-action:hover { background-color: #2563eb; }
+
+        .btn-danger { background-color: var(--btn-danger); }
+        .btn-danger:hover { background-color: #dc2626; }
+        
+        .btn-gray { background-color: #64748b; }
+        .btn-gray:hover { background-color: #475569; }
+
+        .btn.small { font-size: 0.95rem; padding: 8px 16px; box-shadow: 0 2px 0 rgba(0,0,0,0.25); }
+        .btn.micro { font-size: 0.85rem; padding: 6px 10px; box-shadow: 0 2px 0 rgba(0,0,0,0.25); }
 
         /* Quiz Panel */
         .quiz-panel {
-            background: var(--card-bg); padding: 30px; border-radius: 16px;
-            margin-top: 20px; border: 4px solid var(--primary);
+            background: var(--card-bg); padding: 30px; border-radius: 12px;
+            margin-top: 20px; border: 1px solid var(--btn-fw);
             text-align: center; animation: slideDown 0.3s ease-out;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
         }
         @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
         
-        .quiz-panel h2 { font-size: 1.6rem; margin-bottom: 10px; }
-        .points-indicator { display: block; color: var(--secondary-hover); font-weight: 800; margin-bottom: 20px; font-size: 1.1rem; }
+        .quiz-panel h2 { font-size: 1.6rem; margin-bottom: 10px; color: #fff; }
+        .points-indicator { display: block; color: var(--text-muted); font-weight: 600; margin-bottom: 20px; font-size: 1rem; }
 
         /* MCQ Grid */
         .mcq-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
         .option-btn {
-            font-size: 1.2rem; padding: 15px; font-weight: 800;
-            border: 3px solid var(--secondary); background: #f0f9ff; color: var(--secondary-hover);
-            border-radius: 12px; cursor: pointer; transition: all 0.2s;
+            font-size: 1.1rem; padding: 15px; font-weight: 800;
+            border: 2px solid var(--border-color); background: #334155; color: var(--text-main);
+            border-radius: 10px; cursor: pointer; transition: all 0.2s;
         }
-        .option-btn:hover { background: #bae6fd; }
-        .option-btn.correct { background: var(--primary); color: white; border-color: var(--primary); }
-        .option-btn.wrong { background: var(--danger); color: white; border-color: var(--danger); }
+        .option-btn:hover { background: #475569; border-color: #64748b; }
+        .option-btn.correct { background: var(--btn-play); color: white; border-color: var(--btn-play); }
+        .option-btn.wrong { background: var(--btn-danger); color: white; border-color: var(--btn-danger); }
 
         .text-answer-input {
-            width: 100%; padding: 15px; font-size: 1.3rem; border: 3px solid var(--border-color);
-            border-radius: 12px; margin-bottom: 15px; font-family: inherit; text-align: center;
+            width: 100%; padding: 15px; font-size: 1.2rem; border: 2px solid var(--border-color);
+            background: #0f172a; color: #fff; border-radius: 10px; margin-bottom: 15px; 
+            font-family: inherit; text-align: center;
         }
+        .text-answer-input:focus { outline: none; border-color: var(--btn-action); }
 
-        .feedback-text { font-size: 1.4rem; font-weight: 800; margin-top: 20px; }
-        .hint-text { margin-top: 15px; font-size: 1.1rem; font-weight: 600; color: #b45309; background: #fef08a; padding: 10px; border-radius: 8px; }
+        .feedback-text { font-size: 1.3rem; font-weight: 800; margin-top: 20px; }
+        .hint-text { margin-top: 15px; font-size: 1.1rem; font-weight: 600; color: #fef08a; background: rgba(234, 179, 8, 0.2); padding: 10px; border-radius: 8px; border: 1px solid #eab308; }
 
         /* Teacher Dashboard Layout */
         .teacher-layout { display: grid; grid-template-columns: 400px 1fr; gap: 20px; align-items: start; }
         @media (max-width: 900px) { .teacher-layout { grid-template-columns: 1fr; } }
 
         .sticky-panel { position: sticky; top: 20px; display: flex; flex-direction: column; gap: 20px; }
-        .teacher-panel { background: #fff; padding: 20px; border-radius: 12px; border: 2px solid var(--border-color); }
-        .teacher-panel label { display: block; font-weight: 600; margin-top: 10px; font-size: 0.95rem; }
-        .teacher-panel input[type="text"], .teacher-panel input[type="number"], .teacher-panel select {
-            width: 100%; padding: 10px; margin-top: 5px; border: 2px solid #cbd5e1;
-            border-radius: 8px; font-family: inherit; font-size: 1rem;
+        .teacher-panel { background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border-color); }
+        .teacher-panel label { display: block; font-weight: 600; margin-top: 10px; font-size: 0.95rem; color: var(--text-muted); }
+        .teacher-panel input[type="text"], .teacher-panel input[type="number"], .teacher-panel input[type="password"], .teacher-panel select {
+            width: 100%; padding: 10px; margin-top: 5px; border: 1px solid var(--border-color);
+            background: #0f172a; color: #fff; border-radius: 8px; font-family: inherit; font-size: 1rem;
         }
         
-        .t-mcq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px dashed #cbd5e1;}
+        .t-mcq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; background: #0f172a; padding: 15px; border-radius: 8px; border: 1px dashed var(--border-color);}
         .t-mcq-item { display: flex; align-items: center; gap: 10px; }
-        .t-mcq-item input[type="radio"] { transform: scale(1.5); cursor: pointer; }
+        .t-mcq-item input[type="radio"] { transform: scale(1.3); cursor: pointer; }
 
-        .q-box { border: 2px solid #e2e8f0; padding: 20px; border-radius: 12px; margin-bottom: 20px; background: #ffffff; }
-        .q-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; margin-bottom: 15px; }
+        .q-box { border: 1px solid var(--border-color); padding: 20px; border-radius: 12px; margin-bottom: 20px; background: var(--card-bg); box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        .q-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 15px; }
 
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.6); display: flex; justify-content: center; align-items: center; z-index: 1000;
+            background: rgba(0, 0, 0, 0.8); display: flex; justify-content: center; align-items: center; z-index: 1000;
         }
-        .modal-content { background: var(--card-bg); padding: 40px; border-radius: 20px; width: 90%; max-width: 450px; text-align: center; }
+        .modal-content { background: var(--card-bg); padding: 40px; border-radius: 16px; width: 90%; max-width: 450px; text-align: center; border: 1px solid var(--border-color); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5); }
 
         .gear-icon {
-            position: fixed; bottom: 20px; right: 20px; background: #fff; border: 2px solid #e2e8f0;
-            font-size: 1.5rem; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; opacity: 0.5; z-index: 500;
+            position: fixed; bottom: 20px; right: 20px; background: var(--card-bg); border: 1px solid var(--border-color); color: #fff;
+            font-size: 1.5rem; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; opacity: 0.3; z-index: 500; transition: opacity 0.2s;
         }
         .gear-icon:hover { opacity: 1; }
 
-        .toggle-switch { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; background: #f1f5f9; padding: 10px; border-radius: 8px; }
-        .toggle-switch input { width: 20px; height: 20px; cursor: pointer; }
+        .toggle-switch { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; background: #0f172a; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); }
+        .toggle-switch input { width: 18px; height: 18px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -139,10 +170,10 @@
     <main id="student-view" class="container">
         
         <header class="app-header">
-            <h1 id="app-title">My Video Lesson</h1>
+            <h1 id="app-title">Video Lesson</h1>
             <div class="score-board">
-                <span id="score-display">0</span> ⭐
-                <button id="btn-finish" class="btn primary small">🏁 Finish Lesson</button>
+                <span>Score: <span id="score-display">0</span> Pts</span>
+                <button id="btn-finish" class="btn btn-finish small hidden">🏁 Finish Lesson</button>
             </div>
         </header>
 
@@ -153,99 +184,99 @@
 
         <div id="student-controls" class="controls">
             <div id="group-rewind" class="control-group hidden">
-                <button class="btn secondary micro" onclick="skipTime(-10)">⏪ -10s</button>
-                <button class="btn secondary micro" onclick="skipTime(-5)">⏪ -5s</button>
-                <button class="btn secondary micro" onclick="skipTime(-2)">⏪ -2s</button>
+                <button class="btn btn-rw micro" onclick="skipTime(-10)">⏪ -10s</button>
+                <button class="btn btn-rw micro" onclick="skipTime(-5)">⏪ -5s</button>
+                <button class="btn btn-rw micro" onclick="skipTime(-2)">⏪ -2s</button>
             </div>
             
-            <div id="group-playpause" class="control-group hidden" style="background: transparent;">
-                <button id="btn-play" class="btn primary">▶️ Play</button>
-                <button id="btn-pause" class="btn secondary">⏸️ Pause</button>
+            <div id="group-playpause" class="control-group hidden" style="background: transparent; border: none; padding: 0;">
+                <button id="btn-play" class="btn btn-play">▶️ Play</button>
+                <button id="btn-pause" class="btn btn-pause">⏸️ Pause</button>
             </div>
 
             <div id="group-forward" class="control-group hidden">
-                <button class="btn secondary micro" onclick="skipTime(2)">+2s ⏩</button>
-                <button class="btn secondary micro" onclick="skipTime(5)">+5s ⏩</button>
-                <button class="btn secondary micro" onclick="skipTime(10)">+10s ⏩</button>
+                <button class="btn btn-fw micro" onclick="skipTime(2)">+2s ⏩</button>
+                <button class="btn btn-fw micro" onclick="skipTime(5)">+5s ⏩</button>
+                <button class="btn btn-fw micro" onclick="skipTime(10)">+10s ⏩</button>
             </div>
         </div>
 
         <div id="quiz-area" class="quiz-panel hidden">
             <h2 id="quiz-question">Question?</h2>
-            <span class="points-indicator">⏱️ Answer quickly for more points! (Max: <span id="quiz-max-points">10</span>)</span>
+            <span class="points-indicator">⏱️ Answer quickly for more points! (Max: <span id="quiz-max-points">10</span> Pts)</span>
             
             <div id="quiz-answer-area"></div>
             
             <p id="quiz-feedback" class="feedback-text hidden"></p>
             <p id="quiz-hint" class="hint-text hidden"></p>
-            <button id="btn-hint" class="btn secondary small mt-20 hidden">💡 Help</button>
+            <button id="btn-hint" class="btn btn-pause small mt-20 hidden">💡 Need a Hint?</button>
         </div>
 
     </main>
 
     <div id="save-modal" class="modal-overlay hidden">
         <div class="modal-content">
-            <h2>🎉 You Finished!</h2>
-            <p style="margin-top:10px; font-size:1.2rem;">Total Stars: <strong id="final-score-display" style="color:var(--eab308);">0</strong> ⭐</p>
+            <h2>🎉 Lesson Complete!</h2>
+            <p style="margin-top:10px; font-size:1.2rem; color: var(--text-muted);">Final Score: <strong id="final-score-display" style="color:#fbbf24;">0</strong> Pts</p>
             
             <div style="text-align: left; margin-top: 20px;">
-                <label style="font-weight:bold;">Your Name:</label>
-                <input type="text" id="student-name" placeholder="John Doe" class="text-answer-input" style="padding:10px; margin-bottom:10px;">
+                <label style="font-weight:bold; color:var(--text-muted);">Student Name:</label>
+                <input type="text" id="student-name" placeholder="E.g. John Doe" class="text-answer-input" style="padding:10px; margin-bottom:10px; text-align:left;">
                 
-                <label style="font-weight:bold;">Class / Section:</label>
-                <input type="text" id="student-class" placeholder="Math 101" class="text-answer-input" style="padding:10px;">
+                <label style="font-weight:bold; color:var(--text-muted);">Class / Section:</label>
+                <input type="text" id="student-class" placeholder="E.g. Math 101" class="text-answer-input" style="padding:10px; text-align:left;">
             </div>
 
             <div class="mt-20 flex-between" style="gap:10px;">
-                <button id="btn-save-drive" class="btn primary" style="flex:1;">💾 Save / Download</button>
-                <button id="btn-cancel-save" class="btn secondary">Back</button>
+                <button id="btn-save-drive" class="btn btn-action" style="flex:1;">💾 Submit Data</button>
+                <button id="btn-cancel-save" class="btn btn-gray">Back</button>
             </div>
-            <p id="save-status" class="hidden" style="margin-top:10px; color:var(--primary-hover); font-weight:bold;"></p>
+            <p id="save-status" class="hidden" style="margin-top:15px; color:var(--btn-play); font-weight:bold;"></p>
         </div>
     </div>
 
     <div id="pin-modal" class="modal-overlay hidden">
         <div class="modal-content">
-            <h2>Teacher Only</h2>
-            <input type="password" id="pin-input" placeholder="PIN Code" style="width:100%; padding:10px; margin-top:15px; text-align:center; font-size:1.2rem;">
-            <div class="mt-20">
-                <button id="btn-submit-pin" class="btn primary">Go</button>
-                <button id="btn-cancel-pin" class="btn secondary">Back</button>
+            <h2>Teacher Dashboard</h2>
+            <input type="password" id="pin-input" placeholder="Enter PIN Code" style="width:100%; padding:12px; margin-top:15px; text-align:center; font-size:1.2rem; border-radius:8px; border:1px solid #334155; background:#0f172a; color:#fff;">
+            <div class="mt-20 flex-between" style="gap:10px;">
+                <button id="btn-submit-pin" class="btn btn-action" style="flex:1;">Unlock</button>
+                <button id="btn-cancel-pin" class="btn btn-gray">Cancel</button>
             </div>
-            <p id="pin-error" class="hidden" style="color:red; margin-top:10px;">Wrong PIN!</p>
+            <p id="pin-error" class="hidden" style="color:var(--btn-danger); margin-top:15px;">Incorrect PIN!</p>
         </div>
     </div>
 
     <button id="btn-teacher-login" class="gear-icon">⚙️</button>
 
     <div id="teacher-view" class="teacher-container hidden">
-        <header class="app-header flex-between" style="background: #f8fafc; border-color:#cbd5e1;">
-            <h1>⚙️ Teacher Dashboard</h1>
-            <button id="btn-exit-teacher" class="btn primary">Save & Exit</button>
+        <header class="app-header">
+            <h1>⚙️ Teacher Settings</h1>
+            <button id="btn-exit-teacher" class="btn btn-action">Save & Return to Lesson</button>
         </header>
 
         <div class="teacher-layout">
             
             <div class="sticky-panel">
                 <div class="teacher-panel">
-                    <h3 style="margin-bottom:10px;">1. Video Setup & Preview</h3>
+                    <h3 style="margin-bottom:10px; color:#fff;">1. Video Source</h3>
                     <label>Video Type:</label>
                     <select id="t-video-type">
                         <option value="youtube">YouTube</option>
-                        <option value="local">MP4 File Link (Raw GitHub)</option>
+                        <option value="local">MP4 File Link</option>
                     </select>
                     <label>YouTube ID or MP4 Link:</label>
                     <input type="text" id="t-video-source" placeholder="e.g. dQw4w9WgXcQ">
-                    <button class="btn secondary small mt-10" onclick="loadTeacherVideoPreview()" style="width:100%;">🔄 Load Preview</button>
+                    <button class="btn btn-gray small mt-10" onclick="loadTeacherVideoPreview()" style="width:100%;">🔄 Load Preview</button>
                     
-                    <div class="video-container mt-10" style="border:2px solid #cbd5e1;">
+                    <div class="video-container mt-10">
                         <video id="t-html5-player" class="hidden" controls></video>
                         <div id="t-youtube-player" class="hidden"></div>
                     </div>
                 </div>
 
                 <div class="teacher-panel">
-                    <h3>2. Student Controls & Saving</h3>
+                    <h3 style="color:#fff;">2. Controls & Data</h3>
                     
                     <div class="toggle-switch">
                         <label style="margin:0;">Allow Play & Pause</label>
@@ -260,21 +291,21 @@
                         <input type="checkbox" id="t-ctrl-forward">
                     </div>
 
-                    <label class="mt-10">Google Apps Script Webhook URL (Optional, for auto-saving to Google Sheets):</label>
-                    <input type="text" id="t-webhook" placeholder="https://script.google.com/macros/s/...">
+                    <label class="mt-10">Google Apps Script Webhook URL:</label>
+                    <input type="text" id="t-webhook" placeholder="https://script.google.com/...">
                 </div>
 
                 <div class="teacher-panel">
-                    <h3>3. Security & Backup</h3>
-                    <label>Teacher PIN:</label>
+                    <h3 style="color:#fff;">3. Security & Backup</h3>
+                    <label>Dashboard PIN:</label>
                     <input type="text" id="t-pin">
                     
-                    <hr style="margin: 15px 0; border: 0; border-top: 1px dashed #cbd5e1;">
+                    <hr style="margin: 15px 0; border: 0; border-top: 1px dashed var(--border-color);">
 
-                    <label>Local JSON Backup Data:</label>
-                    <div class="btn-group mt-10">
-                        <button id="btn-export-json" class="btn primary small" style="flex:1;">📥 Export</button>
-                        <label for="import-json" class="btn secondary small" style="flex:1; text-align:center; display:block;">📤 Import</label>
+                    <label>Backup / Restore JSON Data:</label>
+                    <div class="flex-between mt-10" style="gap:10px;">
+                        <button id="btn-export-json" class="btn btn-action small" style="flex:1;">📥 Export</button>
+                        <label for="import-json" class="btn btn-gray small" style="flex:1; text-align:center; display:block; cursor:pointer;">📤 Import</label>
                         <input type="file" id="import-json" accept=".json" class="hidden">
                         <a id="download-anchor" class="hidden"></a>
                     </div>
@@ -282,9 +313,9 @@
             </div>
 
             <div class="teacher-panel" style="background: transparent; border: none; padding: 0;">
-                <div class="flex-between" style="background: #fff; padding: 15px 20px; border-radius: 12px; border: 2px solid var(--border-color); margin-bottom: 20px;">
-                    <h3>4. Questions Manager</h3>
-                    <button id="btn-add-question" class="btn primary small">➕ Add Question Here</button>
+                <div class="flex-between" style="background: var(--card-bg); padding: 15px 20px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 20px;">
+                    <h3 style="color:#fff;">4. Questions Manager</h3>
+                    <button id="btn-add-question" class="btn btn-play small">➕ Add Question</button>
                 </div>
                 
                 <div id="questions-list">
@@ -296,9 +327,6 @@
 
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
-        // ==========================================
-        // 🔄 AUTO-FETCH GITHUB URL
-        // ==========================================
         const AUTO_FETCH_URL = ""; 
 
         const DEFAULT_DATA = {
@@ -325,13 +353,16 @@
         function sanitizeData() {
             if(!appData.controls) appData.controls = { playPause: true, rewind: true, forward: true };
             if(appData.webhookUrl === undefined) appData.webhookUrl = "";
-            appData.questions.forEach(q => { if(!q.maxPoints) q.maxPoints = 10; });
+            appData.questions.forEach(q => { 
+                q.timestamp = Number(q.timestamp) || 0; // Fixes string bugs
+                q.maxPoints = Number(q.maxPoints) || 10;
+                q.correctAnswer = (q.type === 'mcq') ? Number(q.correctAnswer) : q.correctAnswer;
+            });
         }
         sanitizeData();
 
         function saveToLocalStorage() { localStorage.setItem('quizAppDataKids', JSON.stringify(appData)); }
 
-        // Core syncing function to prevent export data loss
         function syncDashboardToAppData() {
             appData.pin = document.getElementById('t-pin').value || appData.pin;
             appData.videoType = document.getElementById('t-video-type').value;
@@ -401,6 +432,7 @@
             clearInterval(timeCheckerInterval);
             answeredQuestions.clear();
             document.getElementById('quiz-area').classList.add('hidden');
+            document.getElementById('btn-finish').classList.add('hidden'); // Hide finish button at start
             
             html5Player.classList.add('hidden');
             document.getElementById('youtube-player').classList.add('hidden');
@@ -424,7 +456,8 @@
                     });
                 }
             }
-            timeCheckerInterval = setInterval(checkVideoTime, 1000);
+            // Runs rapidly (every 250ms) to ensure no questions are missed
+            timeCheckerInterval = setInterval(checkVideoTime, 250);
         }
 
         function getCurrentTime() { return appData.videoType === 'local' ? html5Player.currentTime : (ytPlayer?.getCurrentTime() || 0); }
@@ -444,7 +477,7 @@
                 if (upcomingQs.length > 0) {
                     const nextQTimestamp = upcomingQs[0].timestamp;
                     if (newTime >= nextQTimestamp) {
-                        newTime = nextQTimestamp;
+                        newTime = nextQTimestamp; // Snap directly to the question
                     }
                 }
             }
@@ -464,11 +497,16 @@
         // ==========================================
         function checkVideoTime() {
             const currentTime = getCurrentTime();
-            appData.questions.forEach((q, index) => {
-                if (currentTime >= q.timestamp && currentTime <= q.timestamp + 1 && !answeredQuestions.has(index) && activeQuestionIndex === -1) {
-                    triggerQuiz(q, index);
-                }
-            });
+            
+            // Look for any unanswered question where the current video time is equal to or past the timestamp
+            let passedQuestions = appData.questions
+                .map((q, index) => ({ ...q, originalIndex: index }))
+                .filter(q => currentTime >= q.timestamp && !answeredQuestions.has(q.originalIndex))
+                .sort((a, b) => a.timestamp - b.timestamp); // Prioritize the earliest missed question
+
+            if (passedQuestions.length > 0 && activeQuestionIndex === -1) {
+                triggerQuiz(passedQuestions[0], passedQuestions[0].originalIndex);
+            }
         }
 
         function triggerQuiz(q, index) {
@@ -508,8 +546,8 @@
                 answerArea.appendChild(grid);
             } else {
                 answerArea.innerHTML = `
-                    <input type="text" id="student-text-input" class="text-answer-input" placeholder="Type here...">
-                    <button class="btn primary" onclick="checkTextAnswer(this)">✔️ OK</button>
+                    <input type="text" id="student-text-input" class="text-answer-input" placeholder="Type your answer here...">
+                    <button class="btn btn-play" onclick="checkTextAnswer(this)">Submit Answer</button>
                 `;
             }
         }
@@ -549,27 +587,33 @@
             document.getElementById('score-display').textContent = currentScore;
             
             const fb = document.getElementById('quiz-feedback');
-            fb.textContent = `✨ Great Job! You earned +${earnedPoints} stars! ✨`;
-            fb.style.color = "var(--primary)";
+            fb.textContent = `✨ Correct! You earned +${earnedPoints} Points! ✨`;
+            fb.style.color = "var(--btn-play)";
             fb.classList.remove('hidden');
 
-            setTimeout(closeQuiz, 2500);
+            setTimeout(closeQuiz, 2000);
         }
 
         function handleWrong(btnClicked, correctBtn) {
             if(btnClicked) btnClicked.classList.add('wrong');
             const fb = document.getElementById('quiz-feedback');
-            fb.textContent = "Oops! Try again next time. 0 stars.";
-            fb.style.color = "var(--danger)";
+            fb.textContent = "Oops! Incorrect. 0 Points.";
+            fb.style.color = "var(--btn-danger)";
             fb.classList.remove('hidden');
             if(correctBtn) correctBtn.classList.add('correct'); 
-            setTimeout(closeQuiz, 3000);
+            setTimeout(closeQuiz, 2500);
         }
 
         function closeQuiz() {
             answeredQuestions.add(activeQuestionIndex);
             activeQuestionIndex = -1;
             document.getElementById('quiz-area').classList.add('hidden');
+            
+            // Show Finish Button only if all questions are completed
+            if (answeredQuestions.size === appData.questions.length && appData.questions.length > 0) {
+                document.getElementById('btn-finish').classList.remove('hidden');
+            }
+            
             playVideo();
         }
 
@@ -592,13 +636,13 @@
             
             if(!sName || !sClass) {
                 statusLabel.textContent = "Please enter Name and Class!";
-                statusLabel.style.color = "red";
+                statusLabel.style.color = "var(--btn-danger)";
                 statusLabel.classList.remove('hidden');
                 return;
             }
 
-            statusLabel.style.color = "var(--primary-hover)";
-            statusLabel.textContent = "Saving...";
+            statusLabel.style.color = "var(--btn-play)";
+            statusLabel.textContent = "Saving to Server...";
             statusLabel.classList.remove('hidden');
 
             const payload = {
@@ -616,7 +660,7 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(payload)
                     });
-                    statusLabel.textContent = "✅ Saved to Teacher's Drive!";
+                    statusLabel.textContent = "✅ Successfully Saved!";
                     setTimeout(() => document.getElementById('save-modal').classList.add('hidden'), 2000);
                     return;
                 } catch(e) {
@@ -624,14 +668,14 @@
                 }
             }
 
-            const reportText = `STUDENT SCORE REPORT\nName: ${payload.name}\nClass: ${payload.className}\nScore: ${payload.score} Stars\nDate: ${payload.date}`;
+            const reportText = `STUDENT SCORE REPORT\nName: ${payload.name}\nClass: ${payload.className}\nScore: ${payload.score} Points\nDate: ${payload.date}`;
             const dataStr = "data:text/plain;charset=utf-8," + encodeURIComponent(reportText);
             const dl = document.getElementById('download-anchor');
             dl.setAttribute("href", dataStr); 
             dl.setAttribute("download", `${payload.name}_Score_Report.txt`); 
             dl.click();
 
-            statusLabel.textContent = "✅ Downloaded Report! (Please upload to Classroom)";
+            statusLabel.textContent = "✅ Report Downloaded!";
             setTimeout(() => document.getElementById('save-modal').classList.add('hidden'), 3000);
         };
 
@@ -684,7 +728,7 @@
         }
 
         document.getElementById('btn-exit-teacher').onclick = () => {
-            syncDashboardToAppData(); // Fixes missing data on exit
+            syncDashboardToAppData(); 
             saveToLocalStorage();
             
             if(ytTeacherPlayer) ytTeacherPlayer.stopVideo();
@@ -697,7 +741,7 @@
 
         // JSON BACKUP LOGIC
         document.getElementById('btn-export-json').addEventListener('click', () => {
-            syncDashboardToAppData(); // Forces input sync right before export
+            syncDashboardToAppData(); 
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
             const dl = document.getElementById('download-anchor');
             dl.setAttribute("href", dataStr); dl.setAttribute("download", "video-lesson-backup.json"); dl.click();
@@ -755,7 +799,7 @@
                 div.innerHTML = `
                     <div class="q-header">
                         <h4>Question ${idx + 1}</h4>
-                        <button class="btn danger small" onclick="deleteQ(${idx})">Delete</button>
+                        <button class="btn btn-danger small" onclick="deleteQ(${idx})">Delete</button>
                     </div>
                     
                     <div style="display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap;">
@@ -775,11 +819,11 @@
                             <label>Max Points:</label>
                             <input type="number" value="${q.maxPoints || 10}" min="1" onchange="updateQ(${idx}, 'maxPoints', this.value)">
                         </div>
-                        <button class="btn secondary small" onclick="grabTime(${idx})" style="height:42px; margin-top:5px;">⏱️ Get Time</button>
+                        <button class="btn btn-gray small" onclick="grabTime(${idx})" style="height:42px; margin-top:5px;">⏱️ Get Time</button>
                     </div>
 
                     <div class="mt-10">
-                        <label>Question:</label>
+                        <label>Question Text:</label>
                         <input type="text" value="${q.text}" onchange="updateQ(${idx}, 'text', this.value)">
                     </div>
                     
