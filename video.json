@@ -2,5 +2,11 @@
   "pin": "1037440",
   "videoSource": "BU5RoqHEYZ4",
   "videoType": "youtube",
-  "questions": []
+  "questions": [],
+  "controls": {
+    "playPause": true,
+    "rewind": true,
+    "forward": true
+  },
+  "webhookUrl": "https://script.google.com/macros/s/AKfycbwl0tvckL5jgitzIJts3RonQpPN15oPyAvQtClYOwJQvmJAlkeS0hU5otrPtRnuywqfvQ/exec"
 }
