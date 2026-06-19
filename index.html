@@ -38,10 +38,10 @@
         .app-header {
             display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 20px; background: var(--card-bg); padding: 15px 30px;
-            border-radius: 16px; border: 4px solid #bae6fd;
+            border-radius: 16px; border: 4px solid #bae6fd; flex-wrap: wrap; gap: 10px;
         }
         h1 { font-size: 1.8rem; color: #0f172a; }
-        .score-board { font-size: 1.6rem; font-weight: 800; color: #eab308; }
+        .score-board { font-size: 1.6rem; font-weight: 800; color: #eab308; display: flex; align-items: center; gap: 15px; }
 
         /* Video Player */
         .video-container {
@@ -52,7 +52,8 @@
         video, #youtube-player, #t-youtube-player { width: 100%; height: 100%; border: none; }
 
         /* Controls */
-        .controls { display: flex; justify-content: center; align-items: center; gap: 15px; margin-top: 15px; flex-wrap: wrap; }
+        .controls { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
+        .control-group { display: flex; gap: 5px; background: #e0f2fe; padding: 5px; border-radius: 12px; }
 
         .btn {
             font-family: inherit; font-size: 1.2rem; font-weight: 800;
@@ -65,7 +66,8 @@
         .btn.secondary { background-color: var(--secondary); color: #fff; }
         .btn.danger { background-color: var(--danger); color: #fff; }
         .btn.small { font-size: 1rem; padding: 8px 16px; box-shadow: 0 2px 0 rgba(0,0,0,0.15); }
-        .btn-group { display: flex; gap: 10px; }
+        
+        .btn.micro { font-size: 0.9rem; padding: 8px 12px; box-shadow: 0 2px 0 rgba(0,0,0,0.15); }
 
         /* Quiz Panel */
         .quiz-panel {
@@ -98,16 +100,10 @@
         .hint-text { margin-top: 15px; font-size: 1.1rem; font-weight: 600; color: #b45309; background: #fef08a; padding: 10px; border-radius: 8px; }
 
         /* Teacher Dashboard Layout */
-        .teacher-layout {
-            display: grid; grid-template-columns: 400px 1fr; gap: 20px; align-items: start;
-        }
-        
-        @media (max-width: 900px) {
-            .teacher-layout { grid-template-columns: 1fr; }
-        }
+        .teacher-layout { display: grid; grid-template-columns: 400px 1fr; gap: 20px; align-items: start; }
+        @media (max-width: 900px) { .teacher-layout { grid-template-columns: 1fr; } }
 
         .sticky-panel { position: sticky; top: 20px; display: flex; flex-direction: column; gap: 20px; }
-        
         .teacher-panel { background: #fff; padding: 20px; border-radius: 12px; border: 2px solid var(--border-color); }
         .teacher-panel label { display: block; font-weight: 600; margin-top: 10px; font-size: 0.95rem; }
         .teacher-panel input[type="text"], .teacher-panel input[type="number"], .teacher-panel select {
@@ -126,13 +122,16 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.6); display: flex; justify-content: center; align-items: center; z-index: 1000;
         }
-        .modal-content { background: var(--card-bg); padding: 40px; border-radius: 20px; width: 90%; max-width: 400px; text-align: center; }
+        .modal-content { background: var(--card-bg); padding: 40px; border-radius: 20px; width: 90%; max-width: 450px; text-align: center; }
 
         .gear-icon {
             position: fixed; bottom: 20px; right: 20px; background: #fff; border: 2px solid #e2e8f0;
             font-size: 1.5rem; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; opacity: 0.5; z-index: 500;
         }
         .gear-icon:hover { opacity: 1; }
+
+        .toggle-switch { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; background: #f1f5f9; padding: 10px; border-radius: 8px; }
+        .toggle-switch input { width: 20px; height: 20px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -143,6 +142,7 @@
             <h1 id="app-title">My Video Lesson</h1>
             <div class="score-board">
                 <span id="score-display">0</span> ⭐
+                <button id="btn-finish" class="btn primary small">🏁 Finish Lesson</button>
             </div>
         </header>
 
@@ -151,11 +151,23 @@
             <div id="youtube-player" class="hidden"></div>
         </div>
 
-        <div class="controls">
-            <button id="btn-rewind" class="btn secondary small">⏪ -2s</button>
-            <button id="btn-play" class="btn primary">▶️ Play</button>
-            <button id="btn-pause" class="btn secondary">⏸️ Pause</button>
-            <button id="btn-forward" class="btn secondary small">⏩ +2s</button>
+        <div id="student-controls" class="controls">
+            <div id="group-rewind" class="control-group hidden">
+                <button class="btn secondary micro" onclick="skipTime(-10)">⏪ -10s</button>
+                <button class="btn secondary micro" onclick="skipTime(-5)">⏪ -5s</button>
+                <button class="btn secondary micro" onclick="skipTime(-2)">⏪ -2s</button>
+            </div>
+            
+            <div id="group-playpause" class="control-group hidden" style="background: transparent;">
+                <button id="btn-play" class="btn primary">▶️ Play</button>
+                <button id="btn-pause" class="btn secondary">⏸️ Pause</button>
+            </div>
+
+            <div id="group-forward" class="control-group hidden">
+                <button class="btn secondary micro" onclick="skipTime(2)">+2s ⏩</button>
+                <button class="btn secondary micro" onclick="skipTime(5)">+5s ⏩</button>
+                <button class="btn secondary micro" onclick="skipTime(10)">+10s ⏩</button>
+            </div>
         </div>
 
         <div id="quiz-area" class="quiz-panel hidden">
@@ -170,6 +182,27 @@
         </div>
 
     </main>
+
+    <div id="save-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2>🎉 You Finished!</h2>
+            <p style="margin-top:10px; font-size:1.2rem;">Total Stars: <strong id="final-score-display" style="color:var(--eab308);">0</strong> ⭐</p>
+            
+            <div style="text-align: left; margin-top: 20px;">
+                <label style="font-weight:bold;">Your Name:</label>
+                <input type="text" id="student-name" placeholder="John Doe" class="text-answer-input" style="padding:10px; margin-bottom:10px;">
+                
+                <label style="font-weight:bold;">Class / Section:</label>
+                <input type="text" id="student-class" placeholder="Math 101" class="text-answer-input" style="padding:10px;">
+            </div>
+
+            <div class="mt-20 flex-between" style="gap:10px;">
+                <button id="btn-save-drive" class="btn primary" style="flex:1;">💾 Save / Download</button>
+                <button id="btn-cancel-save" class="btn secondary">Back</button>
+            </div>
+            <p id="save-status" class="hidden" style="margin-top:10px; color:var(--primary-hover); font-weight:bold;"></p>
+        </div>
+    </div>
 
     <div id="pin-modal" class="modal-overlay hidden">
         <div class="modal-content">
@@ -199,7 +232,7 @@
                     <label>Video Type:</label>
                     <select id="t-video-type">
                         <option value="youtube">YouTube</option>
-                        <option value="local">MP4 File Link (e.g., Raw GitHub Link)</option>
+                        <option value="local">MP4 File Link (Raw GitHub)</option>
                     </select>
                     <label>YouTube ID or MP4 Link:</label>
                     <input type="text" id="t-video-source" placeholder="e.g. dQw4w9WgXcQ">
@@ -212,18 +245,30 @@
                 </div>
 
                 <div class="teacher-panel">
-                    <h3>2. Security & Backup</h3>
+                    <h3>2. Student Controls & Saving</h3>
+                    
+                    <div class="toggle-switch">
+                        <label style="margin:0;">Allow Play & Pause</label>
+                        <input type="checkbox" id="t-ctrl-play">
+                    </div>
+                    <div class="toggle-switch">
+                        <label style="margin:0;">Allow Rewind (Back)</label>
+                        <input type="checkbox" id="t-ctrl-rewind">
+                    </div>
+                    <div class="toggle-switch">
+                        <label style="margin:0;">Allow Fast-Forward</label>
+                        <input type="checkbox" id="t-ctrl-forward">
+                    </div>
+
+                    <label class="mt-10">Google Apps Script Webhook URL (Optional, for auto-saving to Google Sheets):</label>
+                    <input type="text" id="t-webhook" placeholder="https://script.google.com/macros/s/...">
+                </div>
+
+                <div class="teacher-panel">
+                    <h3>3. Security & Backup</h3>
                     <label>Teacher PIN:</label>
                     <input type="text" id="t-pin">
                     
-                    <hr style="margin: 15px 0; border: 0; border-top: 1px solid #cbd5e1;">
-                    
-                    <label>Fetch from GitHub (Raw JSON URL):</label>
-                    <div class="flex-between" style="gap:10px; margin-top:5px;">
-                        <input type="text" id="github-url" placeholder="https://raw.githubusercontent.com/...">
-                        <button id="btn-fetch-github" class="btn secondary small" style="white-space:nowrap;">🔄 Fetch</button>
-                    </div>
-
                     <hr style="margin: 15px 0; border: 0; border-top: 1px dashed #cbd5e1;">
 
                     <label>Local JSON Backup Data:</label>
@@ -238,7 +283,7 @@
 
             <div class="teacher-panel" style="background: transparent; border: none; padding: 0;">
                 <div class="flex-between" style="background: #fff; padding: 15px 20px; border-radius: 12px; border: 2px solid var(--border-color); margin-bottom: 20px;">
-                    <h3>3. Questions Manager</h3>
+                    <h3>4. Questions Manager</h3>
                     <button id="btn-add-question" class="btn primary small">➕ Add Question Here</button>
                 </div>
                 
@@ -253,16 +298,15 @@
     <script>
         // ==========================================
         // 🔄 AUTO-FETCH GITHUB URL
-        // Paste your RAW GitHub JSON link inside the quotes below to auto-sync for students
-        // e.g. "https://raw.githubusercontent.com/username/repo/main/quiz-data.json"
         // ==========================================
-        const AUTO_FETCH_URL = "https://raw.githubusercontent.com/teachercristw/videoquiz/refs/heads/main/index.html"; 
-
+        const AUTO_FETCH_URL = ""; 
 
         const DEFAULT_DATA = {
             pin: "1234",
-            videoSource: "BU5RoqHEYZ4", 
-            videoType: "youtube",       
+            videoSource: "dQw4w9WgXcQ", 
+            videoType: "youtube",
+            webhookUrl: "",
+            controls: { playPause: true, rewind: true, forward: true },
             questions: [
                 {
                     type: "mcq",
@@ -279,6 +323,8 @@
         let appData = JSON.parse(localStorage.getItem('quizAppDataKids')) || DEFAULT_DATA;
         
         function sanitizeData() {
+            if(!appData.controls) appData.controls = { playPause: true, rewind: true, forward: true };
+            if(appData.webhookUrl === undefined) appData.webhookUrl = "";
             appData.questions.forEach(q => { if(!q.maxPoints) q.maxPoints = 10; });
         }
         sanitizeData();
@@ -301,12 +347,10 @@
         const tHtml5Player = document.getElementById('t-html5-player');
 
         // ==========================================
-        // AUTO-FETCH LOGIC ON LOAD
+        // INIT LOGIC
         // ==========================================
         window.onload = async () => { 
-            const urlParams = new URLSearchParams(window.location.search);
-            const targetUrl = urlParams.get('config') || AUTO_FETCH_URL;
-
+            const targetUrl = AUTO_FETCH_URL;
             if (targetUrl) {
                 try {
                     const response = await fetch(targetUrl);
@@ -315,18 +359,24 @@
                         sanitizeData();
                         saveToLocalStorage();
                     }
-                } catch (e) {
-                    console.error("Auto-fetch failed", e);
-                }
+                } catch (e) { console.error("Auto-fetch failed", e); }
             }
-            
             initPending = false;
             
-            // Start video player based on fetched/local type
             if (appData.videoType === 'local') initVideoPlayer(); 
             else if (appData.videoType === 'youtube' && isYtApiReady) initVideoPlayer();
         };
 
+        function applyStudentControlsUI() {
+            document.getElementById('group-playpause').classList.toggle('hidden', !appData.controls.playPause);
+            document.getElementById('group-rewind').classList.toggle('hidden', !appData.controls.rewind);
+            document.getElementById('group-forward').classList.toggle('hidden', !appData.controls.forward);
+            
+            // If Local MP4, hide native controls if play/pause is disabled so they can't bypass
+            if (appData.videoType === 'local') {
+                html5Player.controls = appData.controls.playPause; 
+            }
+        }
 
         // ==========================================
         // VIDEO LOGIC
@@ -344,10 +394,11 @@
             html5Player.classList.add('hidden');
             document.getElementById('youtube-player').classList.add('hidden');
 
+            applyStudentControlsUI();
+
             if (appData.videoType === 'local') {
                 if (ytPlayer) ytPlayer.stopVideo();
                 html5Player.src = appData.videoSource;
-                html5Player.controls = true; 
                 html5Player.classList.remove('hidden');
             } else if (appData.videoType === 'youtube' && isYtApiReady) {
                 html5Player.pause();
@@ -356,66 +407,59 @@
                 if (ytPlayer) {
                     ytPlayer.loadVideoById(appData.videoSource);
                 } else {
+                    // Hide YT native controls to enforce our restrictions
                     ytPlayer = new YT.Player('youtube-player', {
                         videoId: appData.videoSource,
-                        playerVars: { 'controls': 1, 'rel': 0, 'playsinline': 1 }
+                        playerVars: { 'controls': 0, 'rel': 0, 'playsinline': 1, 'disablekb': 1 }
                     });
                 }
             }
             timeCheckerInterval = setInterval(checkVideoTime, 1000);
         }
 
-        function loadTeacherVideoPreview() {
-            const vType = document.getElementById('t-video-type').value;
-            const vSrc = document.getElementById('t-video-source').value;
-            
-            tHtml5Player.classList.add('hidden');
-            document.getElementById('t-youtube-player').classList.add('hidden');
-
-            if (vType === 'local') {
-                if (ytTeacherPlayer) ytTeacherPlayer.stopVideo();
-                tHtml5Player.src = vSrc;
-                tHtml5Player.classList.remove('hidden');
-            } else if (vType === 'youtube' && isYtApiReady) {
-                tHtml5Player.pause();
-                document.getElementById('t-youtube-player').classList.remove('hidden');
-                if (ytTeacherPlayer) ytTeacherPlayer.loadVideoById(vSrc);
-                else ytTeacherPlayer = new YT.Player('t-youtube-player', { videoId: vSrc, playerVars: {'controls':1} });
-            }
-        }
-
-        function getTeacherTime() {
-            const vType = document.getElementById('t-video-type').value;
-            if (vType === 'local') return Math.floor(tHtml5Player.currentTime);
-            if (vType === 'youtube' && ytTeacherPlayer) return Math.floor(ytTeacherPlayer.getCurrentTime());
-            return 0;
-        }
-
-        function getCurrentTime() {
-            return appData.videoType === 'local' ? html5Player.currentTime : (ytPlayer?.getCurrentTime() || 0);
-        }
-
+        function getCurrentTime() { return appData.videoType === 'local' ? html5Player.currentTime : (ytPlayer?.getCurrentTime() || 0); }
         function playVideo() { appData.videoType === 'local' ? html5Player.play() : ytPlayer?.playVideo(); }
         function pauseVideo() { appData.videoType === 'local' ? html5Player.pause() : ytPlayer?.pauseVideo(); }
-        function skipTime(seconds) {
+
+        window.skipTime = function(seconds) {
+            const currentTime = getCurrentTime();
+            let newTime = currentTime + seconds;
+
+            // FORWARD BARRIER LOGIC
+            if (seconds > 0) {
+                // Find all questions ahead of current time that haven't been answered
+                let upcomingQs = appData.questions
+                    .map((q, idx) => ({ ...q, originalIndex: idx }))
+                    .filter(q => q.timestamp > currentTime && !answeredQuestions.has(q.originalIndex))
+                    .sort((a, b) => a.timestamp - b.timestamp);
+
+                if (upcomingQs.length > 0) {
+                    const nextQTimestamp = upcomingQs[0].timestamp;
+                    // If the jump passes the question, force it to land exactly on the question
+                    if (newTime >= nextQTimestamp) {
+                        newTime = nextQTimestamp;
+                    }
+                }
+            }
+
+            // Apply the new time
             if (appData.videoType === 'local') {
-                html5Player.currentTime += seconds;
+                html5Player.currentTime = Math.max(0, newTime);
             } else if (appData.videoType === 'youtube' && ytPlayer) {
-                ytPlayer.seekTo(ytPlayer.getCurrentTime() + seconds, true);
+                ytPlayer.seekTo(Math.max(0, newTime), true);
             }
         }
 
         document.getElementById('btn-play').addEventListener('click', playVideo);
         document.getElementById('btn-pause').addEventListener('click', pauseVideo);
-        document.getElementById('btn-rewind').addEventListener('click', () => skipTime(-2));
-        document.getElementById('btn-forward').addEventListener('click', () => skipTime(2));
 
         // ==========================================
-        // QUIZ LOGIC (KIDS VIEW)
+        // QUIZ LOGIC
         // ==========================================
         function checkVideoTime() {
             const currentTime = getCurrentTime();
             appData.questions.forEach((q, index) => {
+                // Buffer of 1 second to catch it
                 if (currentTime >= q.timestamp && currentTime <= q.timestamp + 1 && !answeredQuestions.has(index) && activeQuestionIndex === -1) {
                     triggerQuiz(q, index);
                 }
@@ -432,8 +476,8 @@
             
             document.getElementById('quiz-question').textContent = q.text;
             document.getElementById('quiz-max-points').textContent = q.maxPoints;
-            
             document.getElementById('quiz-feedback').classList.add('hidden');
+            
             const hintBtn = document.getElementById('btn-hint');
             const hintTxt = document.getElementById('quiz-hint');
             hintTxt.classList.add('hidden');
@@ -525,6 +569,70 @@
         }
 
         // ==========================================
+        // FINISH & SAVE LOGIC
+        // ==========================================
+        document.getElementById('btn-finish').onclick = () => {
+            pauseVideo();
+            document.getElementById('final-score-display').textContent = currentScore;
+            document.getElementById('save-modal').classList.remove('hidden');
+            document.getElementById('save-status').classList.add('hidden');
+        };
+
+        document.getElementById('btn-cancel-save').onclick = () => document.getElementById('save-modal').classList.add('hidden');
+
+        document.getElementById('btn-save-drive').onclick = async () => {
+            const sName = document.getElementById('student-name').value.trim();
+            const sClass = document.getElementById('student-class').value.trim();
+            const statusLabel = document.getElementById('save-status');
+            
+            if(!sName || !sClass) {
+                statusLabel.textContent = "Please enter Name and Class!";
+                statusLabel.style.color = "red";
+                statusLabel.classList.remove('hidden');
+                return;
+            }
+
+            statusLabel.style.color = "var(--primary-hover)";
+            statusLabel.textContent = "Saving...";
+            statusLabel.classList.remove('hidden');
+
+            const payload = {
+                name: sName,
+                className: sClass,
+                score: currentScore,
+                date: new Date().toLocaleString()
+            };
+
+            // If Webhook exists, try to send to Google Sheets
+            if (appData.webhookUrl) {
+                try {
+                    await fetch(appData.webhookUrl, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    statusLabel.textContent = "✅ Saved to Teacher's Drive!";
+                    setTimeout(() => document.getElementById('save-modal').classList.add('hidden'), 2000);
+                    return;
+                } catch(e) {
+                    console.log("Webhook failed, falling back to download");
+                }
+            }
+
+            // Fallback: Download Local Report
+            const reportText = `STUDENT SCORE REPORT\nName: ${payload.name}\nClass: ${payload.className}\nScore: ${payload.score} Stars\nDate: ${payload.date}`;
+            const dataStr = "data:text/plain;charset=utf-8," + encodeURIComponent(reportText);
+            const dl = document.getElementById('download-anchor');
+            dl.setAttribute("href", dataStr); 
+            dl.setAttribute("download", `${payload.name}_Score_Report.txt`); 
+            dl.click();
+
+            statusLabel.textContent = "✅ Downloaded Report! (Please upload to Classroom)";
+            setTimeout(() => document.getElementById('save-modal').classList.add('hidden'), 3000);
+        };
+
+        // ==========================================
         // TEACHER DASHBOARD LOGIC
         // ==========================================
         document.getElementById('btn-teacher-login').onclick = () => {
@@ -546,10 +654,42 @@
             }
         };
 
+        function loadTeacherVideoPreview() {
+            const vType = document.getElementById('t-video-type').value;
+            const vSrc = document.getElementById('t-video-source').value;
+            
+            tHtml5Player.classList.add('hidden');
+            document.getElementById('t-youtube-player').classList.add('hidden');
+
+            if (vType === 'local') {
+                if (ytTeacherPlayer) ytTeacherPlayer.stopVideo();
+                tHtml5Player.src = vSrc;
+                tHtml5Player.classList.remove('hidden');
+            } else if (vType === 'youtube' && isYtApiReady) {
+                tHtml5Player.pause();
+                document.getElementById('t-youtube-player').classList.remove('hidden');
+                if (ytTeacherPlayer) ytTeacherPlayer.loadVideoById(vSrc);
+                else ytTeacherPlayer = new YT.Player('t-youtube-player', { videoId: vSrc, playerVars: {'controls':1} });
+            }
+        }
+
+        function getTeacherTime() {
+            const vType = document.getElementById('t-video-type').value;
+            if (vType === 'local') return Math.floor(tHtml5Player.currentTime);
+            if (vType === 'youtube' && ytTeacherPlayer) return Math.floor(ytTeacherPlayer.getCurrentTime());
+            return 0;
+        }
+
         document.getElementById('btn-exit-teacher').onclick = () => {
             appData.pin = document.getElementById('t-pin').value || appData.pin;
             appData.videoType = document.getElementById('t-video-type').value;
             appData.videoSource = document.getElementById('t-video-source').value;
+            appData.webhookUrl = document.getElementById('t-webhook').value;
+            
+            appData.controls.playPause = document.getElementById('t-ctrl-play').checked;
+            appData.controls.rewind = document.getElementById('t-ctrl-rewind').checked;
+            appData.controls.forward = document.getElementById('t-ctrl-forward').checked;
+
             saveToLocalStorage();
             
             if(ytTeacherPlayer) ytTeacherPlayer.stopVideo();
@@ -559,25 +699,6 @@
             document.getElementById('student-view').classList.remove('hidden');
             initVideoPlayer();
         };
-
-        // GITHUB FETCH IN DASHBOARD
-        document.getElementById('btn-fetch-github').addEventListener('click', async () => {
-            const url = document.getElementById('github-url').value;
-            if(!url) return alert("Please enter a valid RAW GitHub URL.");
-            try {
-                const response = await fetch(url);
-                if(response.ok) {
-                    appData = await response.json();
-                    sanitizeData();
-                    saveToLocalStorage();
-                    alert("Data fetched successfully from GitHub!");
-                    renderTeacherDashboard();
-                    loadTeacherVideoPreview();
-                } else {
-                    alert("Failed to fetch. Make sure it's the RAW JSON link.");
-                }
-            } catch(e) { alert("Error fetching data: " + e.message); }
-        });
 
         // JSON BACKUP LOGIC
         document.getElementById('btn-export-json').addEventListener('click', () => {
@@ -607,6 +728,11 @@
             document.getElementById('t-pin').value = appData.pin;
             document.getElementById('t-video-type').value = appData.videoType;
             document.getElementById('t-video-source').value = appData.videoSource;
+            document.getElementById('t-webhook').value = appData.webhookUrl;
+
+            document.getElementById('t-ctrl-play').checked = appData.controls.playPause;
+            document.getElementById('t-ctrl-rewind').checked = appData.controls.rewind;
+            document.getElementById('t-ctrl-forward').checked = appData.controls.forward;
 
             const list = document.getElementById('questions-list');
             list.innerHTML = '';
