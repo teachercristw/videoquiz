@@ -3,270 +3,1067 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Colour Monster Goes to School Quiz</title>
+    <title>Interactive Video Quiz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
+    
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; background-color: #f0f8ff; margin: 0; padding: 20px; }
-        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0,0,0,0.1); }
-        video { width: 100%; border-radius: 8px; background-color: #000; }
-        .screen { display: none; }
-        .active { display: block; }
-        
-        /* New Layout: Question box appears cleanly below the video so it never blocks the view */
-        .quiz-box { 
-            display: none; 
-            background: #fff9c4; 
-            border: 3px solid #ffeb3b; 
-            border-radius: 8px; 
-            padding: 15px; 
-            margin-top: 15px; 
-            box-sizing: border-box; 
+        /* Base Variables - Sophisticated & Creative Dark Theme */
+        :root {
+            --bg-color: #020617;        
+            --card-bg: rgba(30, 41, 59, 0.7); 
+            --text-main: #f8fafc;       
+            --text-muted: #94a3b8;      
+            --border-color: rgba(51, 65, 85, 0.8); 
+            --font-main: 'Nunito', sans-serif;
+            
+            /* Neon / Vibrant Accents */
+            --accent-glow: #38bdf8;
+            --btn-play: #10b981;        
+            --btn-pause: #f59e0b;       
+            --btn-rw: #8b5cf6;          
+            --btn-fw: #06b6d4;          
+            --btn-finish: #6366f1;      
+            --btn-action: #3b82f6;      
+            --btn-danger: #ef4444;      
         }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body { 
+            font-family: var(--font-main); 
+            background-color: var(--bg-color); 
+            color: var(--text-main); 
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(56, 189, 248, 0.05), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(99, 102, 241, 0.05), transparent 25%);
+        }
+
+        .hidden { display: none !important; }
+        .mt-10 { margin-top: 10px; }
+        .mt-20 { margin-top: 20px; }
+        .mb-20 { margin-bottom: 20px; }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; }
+
+        /* Containers */
+        .container { flex: 1; width: 100%; max-width: 1000px; margin: 0 auto; padding: 20px; }
+        .teacher-container { flex: 1; width: 100%; max-width: 1200px; margin: 0 auto; padding: 20px; }
+
+        /* Splash Screen */
+        #splash-view {
+            position: fixed; inset: 0; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; z-index: 2000;
+            background: radial-gradient(circle at center, #1e1b4b 0%, #020617 100%);
+            text-align: center; padding: 20px;
+        }
+        .splash-title {
+            font-size: 4rem; font-weight: 800; margin-bottom: 20px;
+            background: linear-gradient(to right, #38bdf8, #818cf8, #c084fc);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-shadow: 0 10px 30px rgba(129, 140, 248, 0.2); line-height: 1.2;
+        }
+        .splash-subtitle { color: var(--text-muted); font-size: 1.2rem; margin-bottom: 40px; max-width: 600px; }
+        .btn-enter {
+            font-size: 1.5rem; padding: 15px 40px; border-radius: 50px;
+            background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+            color: #fff; border: none; cursor: pointer; font-weight: 800;
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.4); transition: all 0.3s ease;
+            animation: pulse 2s infinite; font-family: inherit;
+        }
+        .btn-enter:hover { transform: scale(1.05); box-shadow: 0 15px 30px rgba(59, 130, 246, 0.6); }
+        .btn-enter:disabled { background: #475569; cursor: not-allowed; animation: none; box-shadow: none; opacity: 0.7; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(59, 130, 246, 0); } 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); } }
+
+        /* Homepage Design */
+        .welcome-hero {
+            background: linear-gradient(135deg, rgba(30, 27, 75, 0.8) 0%, rgba(30, 41, 59, 0.8) 100%);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color); padding: 40px; border-radius: 16px;
+            text-align: center; margin-bottom: 30px; box-shadow: 0 10px 30px -5px rgba(0,0,0,0.5);
+            position: relative; overflow: hidden;
+        }
+        .welcome-hero h1 { font-size: 2.5rem; margin-bottom: 10px; color: #fff; }
+        .welcome-hero p { color: var(--text-muted); font-size: 1.2rem; }
         
-        .btn { background-color: #4CAF50; color: white; padding: 12px 24px; border: none; border-radius: 5px; cursor: pointer; font-size: 18px; margin: 10px; }
-        .btn:hover { background-color: #45a049; }
-        .btn-nav { background-color: #2196F3; }
-        .btn-nav:hover { background-color: #0b7dda; }
-        .options-container { display: flex; flex-direction: column; align-items: center; margin-top: 15px; }
-        .option-btn { background-color: #e7e7e7; color: black; width: 80%; padding: 10px; margin: 5px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px; cursor: pointer; }
-        .option-btn:hover { background-color: #ddd; }
-        input[type="text"] { padding: 10px; font-size: 16px; width: 60%; text-align: center; margin-top: 10px; border: 2px solid #ccc; border-radius: 5px; }
-        .nav-controls { margin-top: 15px; }
+        .lesson-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .lesson-card {
+            background: var(--card-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color); border-radius: 16px; padding: 25px; 
+            cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2); display: flex; flex-direction: column; justify-content: space-between;
+        }
+        .lesson-card:hover { 
+            transform: translateY(-8px); 
+            border-color: var(--accent-glow); 
+            box-shadow: 0 15px 30px rgba(56, 189, 248, 0.15), inset 0 0 20px rgba(56, 189, 248, 0.05); 
+        }
+        .lesson-card h3 { font-size: 1.3rem; margin-bottom: 10px; color: #fff; }
+        .lesson-meta { font-size: 0.95rem; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center; margin-top: 15px;}
+        .badge { background: rgba(51, 65, 85, 0.8); padding: 4px 12px; border-radius: 20px; font-weight: 800; color: #fbbf24;}
+
+        /* Header */
+        .app-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px; background: var(--card-bg); padding: 15px 25px;
+            border-radius: 16px; border: 1px solid var(--border-color);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); flex-wrap: wrap; gap: 15px;
+            backdrop-filter: blur(10px);
+        }
+        .app-header h1 { font-size: 1.5rem; font-weight: 800; }
+        .score-board { font-size: 1.4rem; font-weight: 800; color: #fbbf24; display: flex; align-items: center; gap: 15px; flex-wrap: wrap;}
+
+        /* Video Player */
+        .video-container {
+            position: relative; width: 100%; background: #000; border-radius: 16px;
+            overflow: hidden; aspect-ratio: 16 / 9; box-shadow: 0 15px 25px rgba(0, 0, 0, 0.6);
+            border: 1px solid var(--border-color);
+        }
+        video, #youtube-player, #t-youtube-player { width: 100%; height: 100%; border: none; }
+
+        /* Controls */
+        .controls { display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
+        .control-group { display: flex; gap: 8px; background: rgba(30, 41, 59, 0.8); padding: 8px; border-radius: 12px; border: 1px solid var(--border-color); flex-wrap: wrap; justify-content: center;}
+
+        .btn {
+            font-family: inherit; font-size: 1.1rem; font-weight: 800;
+            padding: 10px 20px; border: none; border-radius: 10px; color: #fff;
+            cursor: pointer; transition: all 0.2s ease;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.25); text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+        .btn:active { transform: translateY(4px); box-shadow: none; }
+        .btn:hover { filter: brightness(1.1); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+        
+        .btn-play { background-color: var(--btn-play); }
+        .btn-pause { background-color: var(--btn-pause); }
+        .btn-rw { background-color: var(--btn-rw); }
+        .btn-fw { background-color: var(--btn-fw); }
+        .btn-finish { background-color: var(--btn-finish); }
+        .btn-action { background-color: var(--btn-action); }
+        .btn-danger { background-color: var(--btn-danger); }
+        .btn-gray { background-color: #64748b; }
+
+        .btn.small { font-size: 0.95rem; padding: 8px 16px; box-shadow: 0 3px 0 rgba(0,0,0,0.25); }
+        .btn.micro { font-size: 0.85rem; padding: 6px 12px; box-shadow: 0 2px 0 rgba(0,0,0,0.25); }
+
+        /* Quiz Panel */
+        .quiz-panel {
+            background: var(--card-bg); backdrop-filter: blur(10px); padding: 30px; 
+            border-radius: 16px; margin-top: 25px; border: 2px solid var(--accent-glow);
+            text-align: center; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(56, 189, 248, 0.05);
+        }
+        @keyframes popIn { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        
+        .quiz-panel h2 { font-size: 1.6rem; margin-bottom: 20px; color: #fff; }
+
+        /* MCQ Grid */
+        .mcq-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        .option-btn {
+            font-size: 1.1rem; padding: 15px; font-weight: 800; font-family: inherit;
+            border: 2px solid var(--border-color); background: rgba(51, 65, 85, 0.8); color: var(--text-main);
+            border-radius: 12px; cursor: pointer; transition: all 0.2s;
+        }
+        .option-btn:hover { background: #475569; border-color: var(--accent-glow); transform: scale(1.02); }
+        .option-btn.correct { background: var(--btn-play); color: white; border-color: var(--btn-play); transform: scale(1); }
+        .option-btn.wrong { background: var(--btn-danger); color: white; border-color: var(--btn-danger); transform: scale(1); }
+
+        .text-answer-input {
+            width: 100%; padding: 15px; font-size: 1.2rem; border: 2px solid var(--border-color);
+            background: rgba(15, 23, 42, 0.8); color: #fff; border-radius: 12px; margin-bottom: 15px; 
+            font-family: inherit; text-align: center; transition: border-color 0.2s;
+        }
+        .text-answer-input:focus { outline: none; border-color: var(--accent-glow); box-shadow: 0 0 10px rgba(56, 189, 248, 0.3); }
+
+        .feedback-text { font-size: 1.3rem; font-weight: 800; margin-top: 20px; animation: popIn 0.3s; }
+        .hint-text { margin-top: 15px; font-size: 1.1rem; font-weight: 600; color: #fef08a; background: rgba(234, 179, 8, 0.15); padding: 12px; border-radius: 10px; border: 1px solid rgba(234, 179, 8, 0.5); }
+
+        /* Teacher Dashboard Layout */
+        .dashboard-tabs { display: flex; gap: 10px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: thin; }
+        .tab-btn {
+            background: rgba(30, 41, 59, 0.8); color: var(--text-muted); border: 1px solid var(--border-color);
+            padding: 10px 20px; border-radius: 10px; font-weight: 700; cursor: pointer; white-space: nowrap; font-family: inherit;
+        }
+        .tab-btn.active { background: var(--btn-action); color: #fff; border-color: var(--btn-action); }
+
+        .teacher-layout { display: grid; grid-template-columns: 400px 1fr; gap: 20px; align-items: start; }
+        .sticky-panel { position: sticky; top: 20px; display: flex; flex-direction: column; gap: 20px; }
+        .teacher-panel { background: var(--card-bg); backdrop-filter: blur(10px); padding: 25px; border-radius: 16px; border: 1px solid var(--border-color); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .teacher-panel label { display: block; font-weight: 600; margin-top: 15px; font-size: 0.95rem; color: var(--text-muted); }
+        .teacher-panel input[type="text"], .teacher-panel input[type="number"], .teacher-panel input[type="password"], .teacher-panel select {
+            width: 100%; padding: 12px; margin-top: 5px; border: 1px solid var(--border-color);
+            background: rgba(15, 23, 42, 0.8); color: #fff; border-radius: 10px; font-family: inherit; font-size: 1rem;
+        }
+        .teacher-panel input:focus, .teacher-panel select:focus { outline: none; border-color: var(--accent-glow); }
+        
+        .t-mcq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; background: rgba(15, 23, 42, 0.5); padding: 15px; border-radius: 12px; border: 1px dashed var(--border-color);}
+        .t-mcq-item { display: flex; align-items: center; gap: 10px; }
+        .t-mcq-item input[type="radio"] { transform: scale(1.3); cursor: pointer; accent-color: var(--accent-glow); }
+
+        .q-box { border: 1px solid var(--border-color); padding: 25px; border-radius: 16px; margin-bottom: 20px; background: rgba(30, 41, 59, 0.9); box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .q-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 15px; }
+        .q-header h4 { font-size: 1.2rem; color: var(--accent-glow); }
+
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(2, 6, 23, 0.85); backdrop-filter: blur(5px); display: flex; justify-content: center; align-items: center; z-index: 1000;
+        }
+        .modal-content { background: #1e293b; padding: 40px; border-radius: 20px; width: 90%; max-width: 450px; text-align: center; border: 1px solid var(--border-color); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+
+        .gear-icon {
+            position: fixed; bottom: 20px; right: 20px; background: var(--card-bg); border: 1px solid var(--border-color); color: #fff;
+            font-size: 1.5rem; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; opacity: 0.2; z-index: 500; transition: all 0.3s;
+            display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .gear-icon:hover { opacity: 1; transform: rotate(90deg); border-color: var(--text-muted); }
+
+        .toggle-switch { display: flex; align-items: center; justify-content: space-between; margin-top: 15px; background: rgba(15, 23, 42, 0.5); padding: 12px 15px; border-radius: 10px; border: 1px solid var(--border-color); }
+        .toggle-switch input { width: 18px; height: 18px; cursor: pointer; accent-color: var(--btn-play); }
+
+        /* Footer */
+        .site-footer {
+            text-align: center; padding: 25px 20px; margin-top: auto; width: 100%;
+            color: var(--text-muted); font-size: 0.95rem; font-weight: 600;
+        }
+        .site-footer span { font-weight: 800; color: #818cf8; letter-spacing: 0.5px; }
+
+        @media (max-width: 900px) { 
+            .teacher-layout { grid-template-columns: 1fr; } 
+            .sticky-panel { position: relative; top: 0; }
+        }
+        @media (max-width: 600px) {
+            .splash-title { font-size: 2.5rem; }
+            .welcome-hero { padding: 30px 15px; }
+            .welcome-hero h1 { font-size: 1.8rem; }
+            .app-header { flex-direction: column; text-align: center; }
+            .score-board { width: 100%; justify-content: center; }
+            .mcq-grid { grid-template-columns: 1fr; }
+            .t-mcq-grid { grid-template-columns: 1fr; }
+            .controls { gap: 8px; }
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div id="homepage-screen" class="screen active">
-        <h2>The Colour Monster Goes to School</h2>
-        <p>Type your name to start the video quiz:</p>
-        <input type="text" id="student-name" placeholder="Your Name" required><br><br>
-        <button class="btn" onclick="startQuiz()">Start Quiz</button>
+    <div id="splash-view">
+        <h1 class="splash-title">Interactive Video Quiz</h1>
+        <p class="splash-subtitle">Engage, learn, and test your knowledge with interactive video lessons.</p>
+        <button id="btn-enter" class="btn-enter" disabled>Connecting...</button>
     </div>
 
-    <div id="quiz-screen" class="screen">
-        <video id="myVideo" controls>
-            <source src="your-video-file.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
-
-        <div id="quiz-box" class="quiz-box">
-            <h3 id="question-text">Question goes here</h3>
-            <div id="answer-area"></div>
-            <br>
-            <button class="btn" id="submit-ans-btn" onclick="checkAnswer()">Submit Answer</button>
+    <main id="home-view" class="container hidden">
+        <div class="welcome-hero">
+            <h1>Welcome to the Learning Hub</h1>
+            <p>Select an assignment below, watch the lesson carefully, and test your skills!</p>
         </div>
 
-        <div class="nav-controls">
-            <button class="btn btn-nav" onclick="goBack()">◀ Back</button>
-            <button class="btn btn-nav" onclick="goForward()">Forward ▶</button>
+        <div class="flex-between mb-20" style="flex-wrap: wrap; gap: 10px;">
+            <h2 style="font-size: 1.5rem; color: #fff;">🎒 Available Lessons</h2>
+        </div>
+
+        <div id="lesson-cards-container" class="lesson-grid"></div>
+    </main>
+
+    <main id="student-view" class="container hidden">
+        <header class="app-header">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <button id="btn-back-home" class="btn btn-gray small">⬅️ Home</button>
+                <h1 id="app-title">Video Lesson</h1>
+            </div>
+            <div class="score-board">
+                <span>Score: <span id="score-display">0</span> Pts</span>
+                <button id="btn-finish" class="btn btn-finish small hidden">🏁 Finish</button>
+            </div>
+        </header>
+
+        <div class="video-container">
+            <video id="html5-player" class="hidden" playsinline></video>
+            <div id="youtube-player" class="hidden"></div>
+        </div>
+
+        <div id="student-controls" class="controls">
+            <div id="group-rewind" class="control-group hidden">
+                <button class="btn btn-rw micro ctrl-btn" onclick="skipTime(-10)">⏪ -10s</button>
+                <button class="btn btn-rw micro ctrl-btn" onclick="skipTime(-5)">----5s</button>
+            </div>
+            
+            <div id="group-playpause" class="control-group hidden" style="background: transparent; border: none; padding: 0;">
+                <button id="btn-play" class="btn btn-play ctrl-btn">▶️ Play</button>
+                <button id="btn-pause" class="btn btn-pause ctrl-btn">⏸️ Pause</button>
+            </div>
+
+            <div id="group-forward" class="control-group hidden">
+                <button class="btn btn-fw micro ctrl-btn" onclick="skipTime(5)">+5s ⏩</button>
+                <button class="btn btn-fw micro ctrl-btn" onclick="skipTime(10)">+10s ⏩</button>
+            </div>
+        </div>
+
+        <div id="quiz-area" class="quiz-panel hidden">
+            <h2 id="quiz-question">Question?</h2>
+            
+            <div id="quiz-answer-area"></div>
+            
+            <p id="quiz-feedback" class="feedback-text hidden"></p>
+            <button id="btn-continue-video" class="btn btn-action mt-20 hidden" style="width: 100%; padding: 15px; font-size: 1.2rem;" onclick="closeQuiz()">Continue Lesson ⏩</button>
+
+            <p id="quiz-hint" class="hint-text hidden"></p>
+            <button id="btn-hint" class="btn btn-pause small mt-20 hidden">💡 Need a Hint?</button>
+        </div>
+    </main>
+
+    <div id="save-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2 style="color:#fff;">🎉 Lesson Complete!</h2>
+            <p style="margin-top:10px; font-size:1.2rem; color: var(--text-muted);">Lesson Score: <strong id="final-score-display" style="color:#fbbf24; font-size:1.5rem;">0</strong></p>
+            
+            <p id="save-status" class="hidden" style="margin-top:15px; font-weight:800; font-size: 1.1rem;"></p>
+
+            <div id="save-inputs" style="text-align: left; margin-top: 25px;">
+                <label style="font-weight:bold; color:var(--text-muted);">Student Name:</label>
+                <input type="text" id="student-name" placeholder="E.g. John Doe" class="text-answer-input" style="padding:12px; margin-bottom:15px; text-align:left;">
+                
+                <label style="font-weight:bold; color:var(--text-muted);">Class / Section:</label>
+                <input type="text" id="student-class" placeholder="E.g. Math 101" class="text-answer-input" style="padding:12px; text-align:left;">
+            </div>
+
+            <div class="mt-20 flex-between" style="gap:15px;">
+                <button id="btn-save-drive" class="btn btn-action" style="flex:1; padding: 12px;">💾 Submit Grade</button>
+                <button id="btn-retry-lesson" class="btn btn-play hidden" style="flex:1; padding: 12px;" onclick="retryLesson()">🔄 Retry Lesson</button>
+                <button id="btn-cancel-save" class="btn btn-gray" style="padding: 12px;">Back</button>
+            </div>
         </div>
     </div>
 
-    <div id="end-screen" class="screen">
-        <h2>Quiz Finished!</h2>
-        <h3 id="result-text"></h3>
+    <div id="pin-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2 style="color:#fff;">Teacher Dashboard</h2>
+            <input type="password" id="pin-input" placeholder="Enter PIN Code" style="width:100%; padding:15px; margin-top:20px; text-align:center; font-size:1.5rem; letter-spacing: 5px; border-radius:12px; border:2px solid #334155; background:#0f172a; color:#fff; font-family: inherit;">
+            <div class="mt-20 flex-between" style="gap:15px;">
+                <button id="btn-submit-pin" class="btn btn-action" style="flex:1;">Unlock</button>
+                <button id="btn-cancel-pin" class="btn btn-gray">Cancel</button>
+            </div>
+            <p id="pin-error" class="hidden" style="color:var(--btn-danger); margin-top:15px; font-weight: bold;">Incorrect PIN!</p>
+        </div>
+    </div>
+
+    <footer class="site-footer" id="main-footer">
+        Developed by <span>Teacher Cris Saranza</span>
+    </footer>
+
+    <button id="btn-teacher-login" class="gear-icon">⚙️</button>
+
+    <div id="teacher-view" class="teacher-container hidden">
+        <header class="app-header">
+            <h1>⚙️ Teacher Workspace</h1>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button id="btn-add-lesson" class="btn btn-play small">📦 New Lesson</button>
+                <button id="btn-exit-teacher" class="btn btn-action small">Save & Close</button>
+            </div>
+        </header>
+
+        <div id="dashboard-tabs-bar" class="dashboard-tabs"></div>
+
+        <div class="teacher-layout">
+            <div class="sticky-panel">
+                <div class="teacher-panel">
+                    <div class="flex-between" style="align-items: flex-start; margin-bottom: 10px;">
+                        <h3 style="color:#fff;">1. Lesson Identity</h3>
+                        <button id="btn-delete-lesson" class="btn btn-danger micro">🗑️ Delete Lesson</button>
+                    </div>
+                    <label>Lesson Title:</label>
+                    <input type="text" id="t-lesson-title" oninput="updateActiveLessonConfig('title', this.value)">
+                    
+                    <label>Required Passing Score (%):</label>
+                    <input type="number" id="t-passing-score" min="0" max="100" placeholder="e.g. 70" oninput="updateActiveLessonConfig('passingScore', this.value)">
+
+                    <label>Video Type:</label>
+                    <select id="t-video-type" onchange="updateActiveLessonConfig('videoType', this.value); loadTeacherVideoPreview();">
+                        <option value="youtube">YouTube</option>
+                        <option value="local">MP4 File Link</option>
+                    </select>
+                    <label>YouTube ID or MP4 Link:</label>
+                    <input type="text" id="t-video-source" oninput="updateActiveLessonConfig('videoSource', this.value)">
+                    <button class="btn btn-gray small mt-10" onclick="loadTeacherVideoPreview()" style="width:100%;">🔄 Load Preview</button>
+                    
+                    <div class="video-container mt-10">
+                        <video id="t-html5-player" class="hidden" controls></video>
+                        <div id="t-youtube-player" class="hidden"></div>
+                    </div>
+                </div>
+
+                <div class="teacher-panel">
+                    <h3 style="color:#fff;">2. Controls & Data</h3>
+                    <div class="toggle-switch">
+                        <label style="margin:0;">Allow Play & Pause</label>
+                        <input type="checkbox" id="t-ctrl-play" onchange="updateActiveLessonControl('playPause', this.checked)">
+                    </div>
+                    <div class="toggle-switch">
+                        <label style="margin:0;">Allow Rewind</label>
+                        <input type="checkbox" id="t-ctrl-rewind" onchange="updateActiveLessonControl('rewind', this.checked)">
+                    </div>
+                    <div class="toggle-switch">
+                        <label style="margin:0;">Allow Fast-Forward</label>
+                        <input type="checkbox" id="t-ctrl-forward" onchange="updateActiveLessonControl('forward', this.checked)">
+                    </div>
+
+                    <label>Google Sheets Webhook URL:</label>
+                    <input type="text" id="t-webhook" oninput="updateGlobalConfig('webhookUrl', this.value)">
+                </div>
+
+                <div class="teacher-panel">
+                    <h3 style="color:#fff;">3. Backup & Security</h3>
+                    <label>Dashboard PIN:</label>
+                    <input type="text" id="t-pin" oninput="updateGlobalConfig('pin', this.value)">
+                    <hr style="margin: 20px 0; border: 0; border-top: 1px dashed var(--border-color);">
+                    <label>System JSON File:</label>
+                    <div class="flex-between mt-10" style="gap:10px;">
+                        <button id="btn-export-json" class="btn btn-action small" style="flex:1;">📥 Export</button>
+                        <label for="import-json" class="btn btn-gray small" style="flex:1; text-align:center; display:block; cursor:pointer;">📤 Import</label>
+                        <input type="file" id="import-json" accept=".json" class="hidden">
+                        <a id="download-anchor" class="hidden"></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="teacher-panel" style="background: transparent; border: none; padding: 0; box-shadow: none;">
+                <div class="flex-between" style="background: var(--card-bg); backdrop-filter: blur(10px); padding: 20px; border-radius: 16px; border: 1px solid var(--border-color); margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                    <h3 style="color:#fff;">4. Questions Manager</h3>
+                    <button id="btn-add-question" class="btn btn-play small">➕ Add Question</button>
+                </div>
+                
+                <div id="questions-list">
+                    </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script>
+        const DEFAULT_GLOBAL_DATA = {
+            pin: "1234",
+            webhookUrl: "",
+            lessons: [{
+                id: "lesson_1", title: "Science Lesson: Solar System", videoSource: "dQw4w9WgXcQ", videoType: "youtube",
+                passingScore: 70,
+                controls: { playPause: true, rewind: true, forward: true },
+                questions: [{ type: "mcq", timestamp: 5, timer: 15, maxPoints: 10, minPoints: 2, text: "What color is the sky?", options: ["Green", "Blue", "Red", "Yellow"], correctAnswer: 1, hint: "Look up on a bright day!" }]
+            }]
+        };
+
+        let globalData = JSON.parse(localStorage.getItem('quizAppMultiLessonData')) || DEFAULT_GLOBAL_DATA;
+        let cumulativeScore = JSON.parse(localStorage.getItem('quizAppCumulativeScore')) || 0;
         
-        <button class="btn" id="submit-drive-btn" onclick="sendToGoogleDrive()" style="display:none;">Send Grade to Teacher</button>
-        <button class="btn" id="retry-btn" style="background-color: #f44336; display:none;" onclick="restartQuiz()">Try Again ↺</button>
-    </div>
-</div>
-
-<script>
-const PASSING_SCORE = 12; 
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwl0tvckL5jgitzIJts3RonQpPN15oPyAvQtClYOwJQvmJAlkeS0hU5otrPtRnuywqfvQ/exec";
-
-const questions = [
-    { id: 1, type: "id", question: "Where is the Color Monster going today?", answer: "school", time: 10 },
-    { id: 2, type: "mc", question: "The Color Monster asks if school is a spooky ______.", options: ["Castle", "House", "Tree", "Box"], answer: "A", time: 25 },
-    { id: 3, type: "mc", question: "What is one funny thing the Color Monster wants to pack in his rucksack?", options: ["Torch", "Banana", "Pillow", "Clock"], answer: "A", time: 40 },
-    { id: 4, type: "id", question: "The boy says the monster only needs a coat and a _____.", answer: "notebook", time: 55 },
-    { id: 5, type: "id", question: "The name of the teacher is Miss _____.", answer: "edwards", time: 70 },
-    { id: 6, type: "mc", question: "How does the Color Monster feel when he first meets his new classmates?", options: ["Happy", "Scared", "Angry", "Sleepy"], answer: "B", time: 85 },
-    { id: 7, type: "mc", question: "What is the first class in the morning?", options: ["Art", "Gym", "Music", "Math"], answer: "C", time: 100 },
-    { id: 8, type: "id", question: "In music class, the monster sings out of _____.", answer: "tune", time: 115 },
-    { id: 9, type: "mc", question: "What does Miss Edwards read to the class?", options: ["A map", "A letter", "A song", "A story"], answer: "D", time: 130 },
-    { id: 10, type: "id", question: "At the playground, the kids want a turn on the _____.", answer: "swing", time: 145 },
-    { id: 11, type: "mc", question: "Before lunch, what do the kids wash?", options: ["Feet", "Hands", "Faces", "Hair"], answer: "B", time: 160 },
-    { id: 12, type: "mc", question: "What food do they eat for lunch?", options: ["Bread and soup", "Pizza and juice", "Apple and milk", "Cake and tea"], answer: "A", time: 175 },
-    { id: 13, type: "id", question: "In the gym, the kids have fun jumping on the _____.", answer: "monster", time: 190 },
-    { id: 14, type: "mc", question: "Why is the Color Monster the best model for painting class?", options: ["He can sit still", "He is very tall", "He can change color", "He has big eyes"], answer: "C", time: 205 },
-    { id: 15, type: "id", question: "After school, the child is very tired and needs to take a _____.", answer: "nap", time: 220 }
-];
-
-let currentScore = 0;
-let studentName = "";
-let answeredQuestions = []; 
-let activeQuestionIndex = null;
-let selectedMCAnswer = "";
-
-const video = document.getElementById("myVideo");
-
-function startQuiz() {
-    const nameInput = document.getElementById("student-name").value.trim();
-    if (nameInput === "") { alert("Please enter your name first."); return; }
-    studentName = nameInput;
-    currentScore = 0;
-    answeredQuestions = [];
-    activeQuestionIndex = null;
-    
-    switchScreen("quiz-screen");
-    video.play();
-}
-
-// --- VIDEO TIMING TRACKER ---
-video.ontimeupdate = function() {
-    let currentTime = Math.floor(video.currentTime);
-    
-    questions.forEach((q, index) => {
-        // Trigger ONLY if it hasn't been answered AND it is not already the open question
-        if (currentTime === q.time && !answeredQuestions.includes(index) && activeQuestionIndex !== index) {
-            video.pause();
-            showQuestion(index);
+        function sanitizeData() {
+            if(!globalData.lessons || globalData.lessons.length === 0) globalData.lessons = [...DEFAULT_GLOBAL_DATA.lessons];
+            if(globalData.webhookUrl === undefined) globalData.webhookUrl = "";
+            globalData.lessons.forEach(l => {
+                if(!l.id) l.id = "lesson_" + Date.now() + Math.random().toString(36).substr(2, 5);
+                if(!l.controls) l.controls = { playPause: true, rewind: true, forward: true };
+                if(l.passingScore === undefined) l.passingScore = 0;
+                l.questions.forEach(q => { 
+                    q.timestamp = Number(q.timestamp) || 0;
+                    q.timer = Number(q.timer) || 10; // Ensures older JSON data gets a default timer
+                    q.maxPoints = Number(q.maxPoints) || 10;
+                    if(q.minPoints === undefined) q.minPoints = 2; 
+                    q.minPoints = Number(q.minPoints);
+                    q.correctAnswer = (q.type === 'mcq') ? Number(q.correctAnswer) : (q.correctAnswer || "");
+                });
+            });
         }
-    });
-};
+        sanitizeData();
 
-video.onended = function() {
-    showEndScreen();
-};
+        function saveToLocalStorage() { 
+            localStorage.setItem('quizAppMultiLessonData', JSON.stringify(globalData)); 
+            localStorage.setItem('quizAppCumulativeScore', JSON.stringify(cumulativeScore));
+        }
 
-// --- SHOW QUESTION ---
-function showQuestion(index) {
-    activeQuestionIndex = index;
-    const q = questions[index];
-    document.getElementById("question-text").innerText = q.question;
-    const answerArea = document.getElementById("answer-area");
-    answerArea.innerHTML = "";
+        let currentActiveLesson = globalData.lessons[0];
+        let teacherActiveLessonIndex = 0;
+        let currentScore = 0;
+        let answeredQuestions = new Set(); 
+        let timeCheckerInterval;
+        let activeQuestionIndex = -1;
+        let questionStartTime = 0; // Silent timestamp tracker
+        let ytPlayer = null; let ytTeacherPlayer = null; let isYtApiReady = false;
+        
+        const html5Player = document.getElementById('html5-player');
+        const tHtml5Player = document.getElementById('t-html5-player');
 
-    if (q.type === "mc") {
-        let labels = ["A", "B", "C", "D"];
-        let html = '<div class="options-container">';
-        q.options.forEach((opt, idx) => {
-            // Keep previous selection highlighted if they rewound the video
-            let buttonStyle = (selectedMCAnswer === labels[idx]) ? 'style="background-color: #ffeb3b;"' : '';
-            html += `<button class="option-btn" id="opt-${labels[idx]}" ${buttonStyle} onclick="selectOption('${labels[idx]}')">${labels[idx]}) ${opt}</button>`;
+        // SPLASH SCREEN SYNC
+        window.onload = async () => {
+            const githubRawUrl = "https://raw.githubusercontent.com/teachercristw/videoquiz/refs/heads/main/video.json";
+            const btnEnter = document.getElementById('btn-enter');
+
+            try {
+                const response = await fetch(githubRawUrl + "?t=" + Date.now());
+                if (!response.ok) throw new Error("Network error");
+                const fetchedData = await response.json();
+                globalData = fetchedData;
+                sanitizeData(); saveToLocalStorage();
+            } catch (error) { console.warn("Using offline saved data."); }
+
+            renderHomepage();
+            btnEnter.textContent = "Enter Hub"; btnEnter.removeAttribute("disabled");
+        };
+
+        document.getElementById('btn-enter').onclick = () => {
+            document.getElementById('splash-view').classList.add('hidden');
+            document.getElementById('home-view').classList.remove('hidden');
+        };
+
+        // HOMEPAGE RENDERING
+        function renderHomepage() {
+            const container = document.getElementById('lesson-cards-container');
+            container.innerHTML = '';
+            
+            globalData.lessons.forEach(lesson => {
+                const card = document.createElement('div');
+                card.className = 'lesson-card';
+                card.innerHTML = `
+                    <div>
+                        <h3>${lesson.title || 'Untitled Lesson'}</h3>
+                        <p style="font-size:0.9rem; color:var(--text-muted)">Type: ${lesson.videoType === 'youtube' ? 'YouTube' : 'Video File'}</p>
+                    </div>
+                    <div class="lesson-meta">
+                        <span>❓ ${lesson.questions.length} Questions</span>
+                        <span class="badge">Pass: ${lesson.passingScore || 0}%</span>
+                    </div>
+                `;
+                card.onclick = () => launchLesson(lesson);
+                container.appendChild(card);
+            });
+        }
+
+        function launchLesson(lesson) {
+            currentActiveLesson = lesson;
+            document.getElementById('home-view').classList.add('hidden');
+            document.getElementById('student-view').classList.remove('hidden');
+            document.getElementById('app-title').textContent = lesson.title || "Video Lesson";
+            currentScore = 0; document.getElementById('score-display').textContent = currentScore;
+            initVideoPlayer();
+        }
+
+        document.getElementById('btn-back-home').onclick = () => {
+            clearInterval(timeCheckerInterval);
+            if(ytPlayer) ytPlayer.stopVideo(); html5Player.pause();
+            document.getElementById('student-view').classList.add('hidden');
+            document.getElementById('quiz-area').classList.add('hidden');
+            document.getElementById('home-view').classList.remove('hidden');
+            renderHomepage();
+        };
+
+        function applyStudentControlsUI() {
+            document.getElementById('group-playpause').classList.toggle('hidden', !currentActiveLesson.controls.playPause);
+            document.getElementById('group-rewind').classList.toggle('hidden', !currentActiveLesson.controls.rewind);
+            document.getElementById('group-forward').classList.toggle('hidden', !currentActiveLesson.controls.forward);
+            if (currentActiveLesson.videoType === 'local') html5Player.controls = currentActiveLesson.controls.playPause; 
+        }
+
+        function onYouTubeIframeAPIReady() { isYtApiReady = true; }
+
+        function initVideoPlayer() {
+            clearInterval(timeCheckerInterval); answeredQuestions.clear();
+            document.getElementById('quiz-area').classList.add('hidden');
+            document.getElementById('btn-finish').classList.add('hidden');
+            html5Player.classList.add('hidden'); document.getElementById('youtube-player').classList.add('hidden');
+            activeQuestionIndex = -1; 
+
+            applyStudentControlsUI();
+
+            if (currentActiveLesson.videoType === 'local') {
+                if (ytPlayer) ytPlayer.stopVideo();
+                html5Player.src = currentActiveLesson.videoSource; html5Player.classList.remove('hidden');
+            } else if (currentActiveLesson.videoType === 'youtube') {
+                html5Player.pause(); document.getElementById('youtube-player').classList.remove('hidden');
+                if (ytPlayer && typeof ytPlayer.loadVideoById === 'function') { ytPlayer.loadVideoById(currentActiveLesson.videoSource); } 
+                else {
+                    ytPlayer = new YT.Player('youtube-player', {
+                        videoId: currentActiveLesson.videoSource,
+                        playerVars: { 'controls': 0, 'rel': 0, 'playsinline': 1, 'disablekb': 1 },
+                        events: { 'onReady': (e) => { e.target.playVideo(); } }
+                    });
+                }
+            }
+            timeCheckerInterval = setInterval(checkVideoTime, 250);
+        }
+
+        function getCurrentTime() { return currentActiveLesson.videoType === 'local' ? html5Player.currentTime : (ytPlayer?.getCurrentTime() || 0); }
+
+        function playVideo() { currentActiveLesson.videoType === 'local' ? html5Player.play() : ytPlayer?.playVideo(); }
+        function pauseVideo() { currentActiveLesson.videoType === 'local' ? html5Player.pause() : ytPlayer?.pauseVideo(); }
+
+        window.skipTime = function(seconds) {
+            const currentTime = getCurrentTime();
+            let newTime = currentTime + seconds;
+
+            let upcomingQs = currentActiveLesson.questions
+                .map((q, idx) => ({ ...q, originalIndex: idx }))
+                .filter(q => !answeredQuestions.has(q.originalIndex))
+                .sort((a, b) => a.timestamp - b.timestamp);
+
+            if (seconds > 0 && upcomingQs.length > 0) {
+                if (newTime >= upcomingQs[0].timestamp) {
+                    newTime = upcomingQs[0].timestamp; 
+                }
+            }
+
+            if (currentActiveLesson.videoType === 'local') html5Player.currentTime = Math.max(0, newTime);
+            else if (currentActiveLesson.videoType === 'youtube' && ytPlayer) ytPlayer.seekTo(Math.max(0, newTime), true);
+        }
+
+        document.getElementById('btn-play').addEventListener('click', playVideo);
+        document.getElementById('btn-pause').addEventListener('click', pauseVideo);
+
+        // --- QUIZ LOGIC ---
+        function checkVideoTime() {
+            const currentTime = getCurrentTime();
+            
+            let upcomingQs = currentActiveLesson.questions
+                .map((q, index) => ({ ...q, originalIndex: index }))
+                .filter(q => !answeredQuestions.has(q.originalIndex))
+                .sort((a, b) => a.timestamp - b.timestamp);
+
+            if (upcomingQs.length > 0) {
+                let nextQ = upcomingQs[0];
+                
+                if (currentTime >= nextQ.timestamp) {
+                    pauseVideo(); 
+                    
+                    if (currentActiveLesson.videoType === 'local' && html5Player.currentTime > nextQ.timestamp + 0.5) {
+                        html5Player.currentTime = nextQ.timestamp;
+                    } else if (currentActiveLesson.videoType === 'youtube' && ytPlayer && ytPlayer.getCurrentTime() > nextQ.timestamp + 0.5) {
+                        ytPlayer.seekTo(nextQ.timestamp, true);
+                    }
+
+                    if (activeQuestionIndex !== nextQ.originalIndex) {
+                        triggerQuiz(nextQ, nextQ.originalIndex);
+                    }
+                }
+            }
+        }
+
+        function triggerQuiz(q, index) {
+            pauseVideo(); 
+            activeQuestionIndex = index;
+            
+            // Start the silent timestamp tracker
+            questionStartTime = Date.now();
+
+            const area = document.getElementById('quiz-area');
+            area.classList.remove('hidden');
+            
+            document.getElementById('quiz-question').textContent = q.text;
+            document.getElementById('quiz-feedback').classList.add('hidden');
+            document.getElementById('btn-continue-video').classList.add('hidden');
+            
+            const hintBtn = document.getElementById('btn-hint');
+            const hintTxt = document.getElementById('quiz-hint');
+            hintTxt.classList.add('hidden');
+            
+            if(q.hint) { hintBtn.classList.remove('hidden'); hintTxt.textContent = `💡 ${q.hint}`; } 
+            else { hintBtn.classList.add('hidden'); }
+
+            const answerArea = document.getElementById('quiz-answer-area');
+            answerArea.innerHTML = ''; 
+
+            if (q.type === 'mcq') {
+                const grid = document.createElement('div');
+                grid.className = 'mcq-grid';
+                q.options.forEach((opt, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn'; btn.textContent = opt;
+                    btn.onclick = () => checkAnswer(idx, btn, q.correctAnswer);
+                    grid.appendChild(btn);
+                });
+                answerArea.appendChild(grid);
+            } else {
+                answerArea.innerHTML = `
+                    <input type="text" id="student-text-input" class="text-answer-input" placeholder="Type your answer here...">
+                    <button class="btn btn-action" onclick="checkTextAnswer(this)">Submit Answer</button>
+                    <p id="empty-warning" class="hidden mt-10" style="color: var(--btn-danger); font-weight: bold;">Please type an answer first!</p>
+                `;
+            }
+        }
+
+        document.getElementById('btn-hint').onclick = () => document.getElementById('quiz-hint').classList.remove('hidden');
+
+        function checkAnswer(selectedIndex, btnClicked, correctIndex) {
+            const grid = document.querySelector('.mcq-grid');
+            if (grid) Array.from(grid.children).forEach(b => b.style.pointerEvents = 'none'); 
+            
+            if (selectedIndex === correctIndex) handleCorrect(btnClicked);
+            else handleWrong(btnClicked, grid ? grid.children[correctIndex] : null);
+        }
+
+        window.checkTextAnswer = function(btnElement) {
+            const inputField = document.getElementById('student-text-input');
+            const warning = document.getElementById('empty-warning');
+            const ans = inputField.value.trim();
+            
+            if (!ans) { 
+                warning.classList.remove('hidden'); 
+                return; 
+            }
+            warning.classList.add('hidden');
+            btnElement.disabled = true;
+            inputField.disabled = true;
+
+            const q = currentActiveLesson.questions[activeQuestionIndex];
+            let isCorrect = false;
+
+            if (q.type === 'essay') {
+                isCorrect = true; 
+            } else if (q.type === 'identification') {
+                const correctStr = (q.correctAnswer || '').toString().toLowerCase().trim();
+                if (ans.toLowerCase() === correctStr) isCorrect = true;
+            }
+
+            if (isCorrect) handleCorrect(null);
+            else handleWrong(null, null);
+        };
+
+        function handleCorrect(btnClicked) {
+            if(btnClicked) btnClicked.classList.add('correct');
+            const q = currentActiveLesson.questions[activeQuestionIndex];
+            
+            // Calculate dynamic linear deduction
+            const timeTakenSec = (Date.now() - questionStartTime) / 1000;
+            const timerLimit = Number(q.timer) || 10;
+            const maxP = Number(q.maxPoints) || 10;
+            const minP = Number(q.minPoints) || 0;
+
+            let pointsEarned = maxP;
+            if (timeTakenSec >= timerLimit) {
+                pointsEarned = minP;
+            } else {
+                const deductionFraction = timeTakenSec / timerLimit;
+                pointsEarned = maxP - ((maxP - minP) * deductionFraction);
+            }
+            
+            // Lock between Min and Max, and round to nearest whole number
+            pointsEarned = Math.round(Math.max(minP, Math.min(maxP, pointsEarned)));
+
+            currentScore += pointsEarned;
+            document.getElementById('score-display').textContent = currentScore;
+            
+            const fb = document.getElementById('quiz-feedback');
+            fb.innerHTML = `✨ Correct! You earned <strong>+${pointsEarned}</strong> Points! <br><span style="font-size:0.9rem; color:var(--text-muted);">(Answered in ${timeTakenSec.toFixed(1)}s)</span>`;
+            fb.style.color = "var(--btn-play)"; fb.classList.remove('hidden');
+            
+            document.getElementById('btn-continue-video').classList.remove('hidden');
+        }
+
+        function handleWrong(btnClicked, correctBtn) {
+            if(btnClicked) btnClicked.classList.add('wrong');
+            const fb = document.getElementById('quiz-feedback');
+            fb.textContent = "Oops! Incorrect. 0 Points.";
+            fb.style.color = "var(--btn-danger)"; fb.classList.remove('hidden');
+            if(correctBtn) correctBtn.classList.add('correct'); 
+            
+            document.getElementById('btn-continue-video').classList.remove('hidden');
+        }
+
+        window.closeQuiz = function() {
+            answeredQuestions.add(activeQuestionIndex);
+            activeQuestionIndex = -1; 
+            document.getElementById('quiz-area').classList.add('hidden');
+            
+            if (answeredQuestions.size === currentActiveLesson.questions.length && currentActiveLesson.questions.length > 0) {
+                document.getElementById('btn-finish').classList.remove('hidden');
+            }
+            playVideo(); 
+        }
+
+        // --- SAVE SYSTEM WITH PASSING GRADE ---
+        document.getElementById('btn-finish').onclick = () => {
+            pauseVideo(); 
+            
+            const totalPossible = currentActiveLesson.questions.reduce((sum, q) => sum + (Number(q.maxPoints) || 10), 0);
+            const percentage = totalPossible > 0 ? Math.round((currentScore / totalPossible) * 100) : 100;
+            const passingScore = currentActiveLesson.passingScore || 0;
+            
+            document.getElementById('final-score-display').textContent = `${currentScore} / ${totalPossible} Pts (${percentage}%)`;
+            
+            const modal = document.getElementById('save-modal');
+            const inputsDiv = document.getElementById('save-inputs');
+            const btnSave = document.getElementById('btn-save-drive');
+            const btnRetry = document.getElementById('btn-retry-lesson');
+            const statusLabel = document.getElementById('save-status');
+            
+            if (percentage < passingScore) {
+                inputsDiv.classList.add('hidden');
+                btnSave.classList.add('hidden');
+                btnRetry.classList.remove('hidden');
+                
+                statusLabel.textContent = `You need ${passingScore}% to pass. Please try again!`;
+                statusLabel.style.color = "var(--btn-danger)";
+                statusLabel.classList.remove('hidden');
+            } else {
+                inputsDiv.classList.remove('hidden');
+                btnSave.classList.remove('hidden');
+                btnRetry.classList.add('hidden');
+                statusLabel.classList.add('hidden');
+            }
+            
+            modal.classList.remove('hidden');
+        };
+
+        window.retryLesson = function() {
+            document.getElementById('save-modal').classList.add('hidden');
+            initVideoPlayer(); 
+        }
+
+        document.getElementById('btn-cancel-save').onclick = () => document.getElementById('save-modal').classList.add('hidden');
+
+        document.getElementById('btn-save-drive').onclick = async () => {
+            const sName = document.getElementById('student-name').value.trim();
+            const sClass = document.getElementById('student-class').value.trim();
+            const statusLabel = document.getElementById('save-status');
+            
+            if(!sName || !sClass) {
+                statusLabel.textContent = "Please enter Name and Class!"; statusLabel.style.color = "var(--btn-danger)";
+                statusLabel.classList.remove('hidden'); return;
+            }
+
+            statusLabel.style.color = "var(--accent-glow)"; statusLabel.textContent = "Saving to Server..."; statusLabel.classList.remove('hidden');
+            cumulativeScore += currentScore;
+            
+            const totalPossible = currentActiveLesson.questions.reduce((sum, q) => sum + (Number(q.maxPoints) || 10), 0);
+            const percentage = totalPossible > 0 ? Math.round((currentScore / totalPossible) * 100) : 100;
+
+            const payload = { lessonId: currentActiveLesson.id, lessonTitle: currentActiveLesson.title, name: sName, className: sClass, score: currentScore, percentage: percentage + "%", date: new Date().toLocaleString() };
+            saveToLocalStorage();
+
+            if (globalData.webhookUrl) {
+                try {
+                    await fetch(globalData.webhookUrl, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                    statusLabel.textContent = "✅ Successfully Saved!"; statusLabel.style.color = "var(--btn-play)";
+                    setTimeout(() => { document.getElementById('save-modal').classList.add('hidden'); document.getElementById('btn-back-home').click(); }, 2000);
+                    return;
+                } catch(e) {}
+            }
+
+            const reportText = `STUDENT SCORE REPORT\nLesson: ${payload.lessonTitle}\nName: ${payload.name}\nClass: ${payload.className}\nScore: ${payload.score} Points (${payload.percentage})\nDate: ${payload.date}`;
+            const dataStr = "data:text/plain;charset=utf-8," + encodeURIComponent(reportText);
+            const dl = document.getElementById('download-anchor');
+            dl.setAttribute("href", dataStr); dl.setAttribute("download", `${payload.name}_${payload.lessonId}_Report.txt`); dl.click();
+
+            statusLabel.textContent = "✅ Report Downloaded!"; statusLabel.style.color = "var(--btn-play)";
+            setTimeout(() => { document.getElementById('save-modal').classList.add('hidden'); document.getElementById('btn-back-home').click(); }, 3000);
+        };
+
+        // --- TEACHER WORKSPACE ---
+        document.getElementById('btn-teacher-login').onclick = () => { pauseVideo(); document.getElementById('pin-modal').classList.remove('hidden'); };
+        document.getElementById('btn-cancel-pin').onclick = () => document.getElementById('pin-modal').classList.add('hidden');
+        
+        document.getElementById('btn-submit-pin').onclick = () => {
+            if (document.getElementById('pin-input').value === globalData.pin) {
+                document.getElementById('pin-modal').classList.add('hidden'); document.getElementById('home-view').classList.add('hidden');
+                document.getElementById('splash-view').classList.add('hidden'); document.getElementById('main-footer').classList.add('hidden');
+                document.getElementById('student-view').classList.add('hidden'); document.getElementById('teacher-view').classList.remove('hidden');
+                document.getElementById('pin-input').value = ''; teacherActiveLessonIndex = 0;
+                renderTabsBar(); renderTeacherDashboard(); loadTeacherVideoPreview();
+            } else { document.getElementById('pin-error').classList.remove('hidden'); }
+        };
+
+        function renderTabsBar() {
+            const tabsBar = document.getElementById('dashboard-tabs-bar');
+            tabsBar.innerHTML = '';
+            globalData.lessons.forEach((lesson, index) => {
+                const btn = document.createElement('button');
+                btn.className = `tab-btn ${index === teacherActiveLessonIndex ? 'active' : ''}`;
+                btn.textContent = lesson.title || `Lesson ${index + 1}`;
+                btn.onclick = () => { teacherActiveLessonIndex = index; renderTabsBar(); renderTeacherDashboard(); loadTeacherVideoPreview(); };
+                tabsBar.appendChild(btn);
+            });
+        }
+
+        function renderTeacherDashboard() {
+            const currentLesson = globalData.lessons[teacherActiveLessonIndex];
+            
+            document.getElementById('t-pin').value = globalData.pin || "";
+            document.getElementById('t-webhook').value = globalData.webhookUrl || "";
+            document.getElementById('t-lesson-title').value = currentLesson.title || "";
+            document.getElementById('t-passing-score').value = currentLesson.passingScore || 0;
+            document.getElementById('t-video-type').value = currentLesson.videoType || "youtube";
+            document.getElementById('t-video-source').value = currentLesson.videoSource || "";
+            document.getElementById('t-ctrl-play').checked = currentLesson.controls.playPause;
+            document.getElementById('t-ctrl-rewind').checked = currentLesson.controls.rewind;
+            document.getElementById('t-ctrl-forward').checked = currentLesson.controls.forward;
+
+            const list = document.getElementById('questions-list');
+            list.innerHTML = '';
+
+            for (let idx = currentLesson.questions.length - 1; idx >= 0; idx--) {
+                const q = currentLesson.questions[idx];
+                const div = document.createElement('div');
+                div.className = 'q-box';
+                
+                let answerHTML = '';
+                if (q.type === 'mcq') {
+                    answerHTML = `
+                        <label>Choices & Correct Answer:</label>
+                        <div class="t-mcq-grid">
+                            <div class="t-mcq-item"><input type="radio" name="q${idx}" ${q.correctAnswer===0?'checked':''} onchange="updateQ(${idx}, 'correctAnswer', 0)"> <input type="text" value="${q.options[0] || ''}" onchange="updateOpt(${idx}, 0, this.value)"></div>
+                            <div class="t-mcq-item"><input type="radio" name="q${idx}" ${q.correctAnswer===1?'checked':''} onchange="updateQ(${idx}, 'correctAnswer', 1)"> <input type="text" value="${q.options[1] || ''}" onchange="updateOpt(${idx}, 1, this.value)"></div>
+                            <div class="t-mcq-item"><input type="radio" name="q${idx}" ${q.correctAnswer===2?'checked':''} onchange="updateQ(${idx}, 'correctAnswer', 2)"> <input type="text" value="${q.options[2] || ''}" onchange="updateOpt(${idx}, 2, this.value)"></div>
+                            <div class="t-mcq-item"><input type="radio" name="q${idx}" ${q.correctAnswer===3?'checked':''} onchange="updateQ(${idx}, 'correctAnswer', 3)"> <input type="text" value="${q.options[3] || ''}" onchange="updateOpt(${idx}, 3, this.value)"></div>
+                        </div>
+                    `;
+                } else if (q.type === 'identification') {
+                    answerHTML = `<label>Correct Answer (Exact Match):</label><input type="text" value="${q.correctAnswer || ''}" onchange="updateQ(${idx}, 'correctAnswer', this.value)">`;
+                }
+
+                div.innerHTML = `
+                    <div class="q-header">
+                        <h4>Question ${idx + 1}</h4>
+                        <button class="btn btn-danger small" onclick="deleteQ(${idx})">Delete</button>
+                    </div>
+                    <div style="display:flex; gap:15px; align-items:flex-end; flex-wrap:wrap;">
+                        <div style="flex:1; min-width: 140px;">
+                            <label>Type:</label>
+                            <select onchange="changeQType(${idx}, this.value)">
+                                <option value="mcq" ${q.type === 'mcq' ? 'selected' : ''}>Multiple Choice</option>
+                                <option value="identification" ${q.type === 'identification' ? 'selected' : ''}>Type Answer</option>
+                                <option value="essay" ${q.type === 'essay' ? 'selected' : ''}>Any Answer (Essay)</option>
+                            </select>
+                        </div>
+                        <div style="flex:1; min-width: 90px;">
+                            <label>Show at (Sec):</label>
+                            <input type="number" id="ts-${idx}" value="${q.timestamp}" onchange="updateQ(${idx}, 'timestamp', this.value)">
+                        </div>
+                        <div style="flex:1; min-width: 90px;">
+                            <label>Timer (Sec):</label>
+                            <input type="number" value="${q.timer || 10}" min="1" onchange="updateQ(${idx}, 'timer', this.value)">
+                        </div>
+                        <div style="flex:1; min-width: 90px;">
+                            <label>Max Pts:</label>
+                            <input type="number" value="${q.maxPoints || 10}" min="1" onchange="updateQ(${idx}, 'maxPoints', this.value)">
+                        </div>
+                        <div style="flex:1; min-width: 90px;">
+                            <label>Min Pts:</label>
+                            <input type="number" value="${q.minPoints || 0}" min="0" onchange="updateQ(${idx}, 'minPoints', this.value)">
+                        </div>
+                        <button class="btn btn-gray small" onclick="grabTime(${idx})" style="height:44px; margin-top:5px;">⏱️ Get Time</button>
+                    </div>
+                    <div class="mt-10">
+                        <label>Question Text:</label>
+                        <input type="text" value="${q.text}" onchange="updateQ(${idx}, 'text', this.value)">
+                    </div>
+                    ${answerHTML}
+                    <div class="mt-10">
+                        <label>Hint (Optional):</label>
+                        <input type="text" value="${q.hint || ''}" onchange="updateQ(${idx}, 'hint', this.value)">
+                    </div>
+                `;
+                list.appendChild(div);
+            }
+        }
+
+        function loadTeacherVideoPreview() {
+            const currentLesson = globalData.lessons[teacherActiveLessonIndex];
+            tHtml5Player.classList.add('hidden'); document.getElementById('t-youtube-player').classList.add('hidden');
+
+            if (currentLesson.videoType === 'local') {
+                if (ytTeacherPlayer) ytTeacherPlayer.stopVideo();
+                tHtml5Player.src = currentLesson.videoSource; tHtml5Player.classList.remove('hidden');
+            } else if (currentLesson.videoType === 'youtube') {
+                tHtml5Player.pause(); document.getElementById('t-youtube-player').classList.remove('hidden');
+                if (ytTeacherPlayer && typeof ytTeacherPlayer.loadVideoById === 'function') ytTeacherPlayer.loadVideoById(currentLesson.videoSource);
+                else ytTeacherPlayer = new YT.Player('t-youtube-player', { videoId: currentLesson.videoSource, playerVars: {'controls':1} });
+            }
+        }
+
+        function getTeacherTime() {
+            const currentLesson = globalData.lessons[teacherActiveLessonIndex];
+            if (currentLesson.videoType === 'local') return Math.floor(tHtml5Player.currentTime);
+            if (currentLesson.videoType === 'youtube' && ytTeacherPlayer) return Math.floor(ytTeacherPlayer.getCurrentTime());
+            return 0;
+        }
+
+        window.grabTime = function(idx) { const t = getTeacherTime(); document.getElementById(`ts-${idx}`).value = t; updateQ(idx, 'timestamp', t); }
+        window.updateActiveLessonConfig = function(field, value) { 
+            if (field === 'passingScore') value = Number(value) || 0;
+            globalData.lessons[teacherActiveLessonIndex][field] = value; 
+            saveToLocalStorage(); 
+            if(field === 'title') renderTabsBar(); 
+        };
+        window.updateActiveLessonControl = function(controlField, isChecked) { globalData.lessons[teacherActiveLessonIndex].controls[controlField] = isChecked; saveToLocalStorage(); };
+        window.updateGlobalConfig = function(field, value) { globalData[field] = value; saveToLocalStorage(); };
+
+        window.updateQ = function(idx, field, val) {
+            const currentLesson = globalData.lessons[teacherActiveLessonIndex];
+            if (field === 'timestamp' || field === 'maxPoints' || field === 'minPoints' || field === 'timer') currentLesson.questions[idx][field] = parseInt(val, 10) || 0;
+            else if (field === 'correctAnswer' && currentLesson.questions[idx].type === 'mcq') currentLesson.questions[idx][field] = parseInt(val, 10) || 0;
+            else currentLesson.questions[idx][field] = val;
+            saveToLocalStorage();
+        };
+
+        window.updateOpt = function(qIdx, optIdx, val) { globalData.lessons[teacherActiveLessonIndex].questions[qIdx].options[optIdx] = val; saveToLocalStorage(); };
+
+        window.changeQType = function(idx, type) {
+            const currentLesson = globalData.lessons[teacherActiveLessonIndex];
+            currentLesson.questions[idx].type = type;
+            if (type === 'mcq') { currentLesson.questions[idx].options = ["", "", "", ""]; currentLesson.questions[idx].correctAnswer = 0; }
+            else currentLesson.questions[idx].correctAnswer = "";
+            saveToLocalStorage(); renderTeacherDashboard();
+        };
+
+        window.deleteQ = function(idx) { globalData.lessons[teacherActiveLessonIndex].questions.splice(idx, 1); saveToLocalStorage(); renderTeacherDashboard(); };
+
+        document.getElementById('btn-add-question').onclick = () => {
+            globalData.lessons[teacherActiveLessonIndex].questions.push({ type: "mcq", timestamp: 0, timer: 10, maxPoints: 10, minPoints: 2, text: "New Question Text", options: ["", "", "", ""], correctAnswer: 0, hint: "" });
+            saveToLocalStorage(); renderTeacherDashboard();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        document.getElementById('btn-add-lesson').onclick = () => {
+            globalData.lessons.push({
+                id: "lesson_" + Date.now(), title: "New Assignment", videoSource: "dQw4w9WgXcQ", videoType: "youtube", passingScore: 70,
+                controls: { playPause: true, rewind: true, forward: true }, questions: []
+            });
+            saveToLocalStorage(); teacherActiveLessonIndex = globalData.lessons.length - 1;
+            renderTabsBar(); renderTeacherDashboard(); loadTeacherVideoPreview();
+        };
+
+        document.getElementById('btn-delete-lesson').onclick = () => {
+            if(globalData.lessons.length <= 1) { alert("You must keep at least one active assignment configuration!"); return; }
+            if(confirm("Are you absolutely sure you want to permanently delete this entire lesson?")) {
+                globalData.lessons.splice(teacherActiveLessonIndex, 1); teacherActiveLessonIndex = 0; saveToLocalStorage();
+                renderTabsBar(); renderTeacherDashboard(); loadTeacherVideoPreview();
+            }
+        };
+
+        document.getElementById('btn-exit-teacher').onclick = () => {
+            if(ytTeacherPlayer) ytTeacherPlayer.stopVideo(); tHtml5Player.pause();
+            document.getElementById('teacher-view').classList.add('hidden');
+            document.getElementById('main-footer').classList.remove('hidden');
+            document.getElementById('home-view').classList.remove('hidden');
+            renderHomepage();
+        };
+
+        document.getElementById('btn-export-json').addEventListener('click', () => {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(globalData, null, 2));
+            const dl = document.getElementById('download-anchor');
+            dl.setAttribute("href", dataStr); dl.setAttribute("download", "multi-lesson-system-backup.json"); dl.click();
         });
-        html += '</div>';
-        answerArea.innerHTML = html;
-    } else if (q.type === "id") {
-        answerArea.innerHTML = `<input type="text" id="id-answer-input" placeholder="Type 1 word here">`;
-    }
-    
-    document.getElementById("quiz-box").style.display = "block";
-}
 
-function selectOption(letter) {
-    selectedMCAnswer = letter;
-    document.querySelectorAll('.option-btn').forEach(btn => btn.style.backgroundColor = '#e7e7e7');
-    document.getElementById(`opt-${letter}`).style.backgroundColor = '#ffeb3b';
-}
-
-// --- CHECK ANSWER ---
-function checkAnswer() {
-    const q = questions[activeQuestionIndex];
-    let isCorrect = false;
-
-    if (q.type === "mc") {
-        if (!selectedMCAnswer) { alert("Please select an option!"); return; }
-        if (selectedMCAnswer === q.answer) isCorrect = true;
-    } else if (q.type === "id") {
-        const inputVal = document.getElementById("id-answer-input").value.trim().toLowerCase();
-        if (!inputVal) { alert("Please type your answer!"); return; }
-        if (inputVal === q.answer.toLowerCase()) isCorrect = true;
-    }
-
-    if (isCorrect) { currentScore++; }
-
-    answeredQuestions.push(activeQuestionIndex);
-    activeQuestionIndex = null; // Clear active status
-    selectedMCAnswer = ""; // Reset temporary memory
-    
-    document.getElementById("quiz-box").style.display = "none";
-    video.play();
-}
-
-// --- INSTANT NAVIGATION (GUIDE MODE) ---
-function goBack() {
-    // Rewind video instantly by 5 seconds
-    video.currentTime = Math.max(0, video.currentTime - 5);
-    
-    // Play video immediately. 
-    // Notice: We DO NOT hide the quiz box. It stays perfectly visible to guide them!
-    video.play();
-}
-
-function goForward() {
-    let nextUnansweredTime = 999999;
-    questions.forEach((q, index) => {
-        if (!answeredQuestions.includes(index) && q.time < nextUnansweredTime) {
-            nextUnansweredTime = q.time;
-        }
-    });
-
-    if (video.currentTime + 5 >= nextUnansweredTime) {
-        video.currentTime = nextUnansweredTime - 0.5; 
-    } else {
-        video.currentTime += 5;
-    }
-}
-
-function switchScreen(screenId) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(screenId).classList.add('active');
-}
-
-function showEndScreen() {
-    document.getElementById("quiz-box").style.display = "none";
-    switchScreen("end-screen");
-    const resultText = document.getElementById("result-text");
-    const submitBtn = document.getElementById("submit-drive-btn");
-    const retryBtn = document.getElementById("retry-btn");
-
-    if (currentScore >= PASSING_SCORE) {
-        resultText.innerHTML = `Great job! You passed!<br>Score: <strong>${currentScore} / 15</strong>`;
-        submitBtn.style.display = "inline-block";
-        retryBtn.style.display = "none";
-    } else {
-        resultText.innerHTML = `You got <strong>${currentScore} / 15</strong>.<br>You need ${PASSING_SCORE} to pass. Please try again!`;
-        submitBtn.style.display = "none";
-        retryBtn.style.display = "inline-block";
-    }
-}
-
-function sendToGoogleDrive() {
-    const submitBtn = document.getElementById("submit-drive-btn");
-    submitBtn.innerText = "Sending...";
-    submitBtn.disabled = true;
-
-    const formData = new URLSearchParams();
-    formData.append("name", studentName);
-    formData.append("score", currentScore);
-    formData.append("total", questions.length);
-    formData.append("status", "PASSED");
-
-    fetch(GOOGLE_SCRIPT_URL, {
-        method: "POST",
-        body: formData,
-        mode: "no-cors"
-    })
-    .then(() => {
-        alert("Success! Your score was sent to the teacher.");
-        restartQuiz();
-    })
-    .catch(error => {
-        console.error("Error:", error);
-        alert("Something went wrong. Please ask the teacher for help.");
-        submitBtn.innerText = "Send Grade to Teacher";
-        submitBtn.disabled = false;
-    });
-}
-
-function restartQuiz() {
-    document.getElementById("student-name").value = "";
-    document.getElementById("quiz-box").style.display = "none";
-    switchScreen("homepage-screen");
-}
-</script>
-
+        document.getElementById('import-json').addEventListener('change', function(e) {
+            const file = e.target.files[0]; if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    globalData = JSON.parse(e.target.result); sanitizeData(); saveToLocalStorage();
+                    alert("System configuration imported successfully!");
+                    teacherActiveLessonIndex = 0; renderTabsBar(); renderTeacherDashboard(); loadTeacherVideoPreview();
+                } catch(err) { alert("Invalid backup profile document format."); }
+            };
+            reader.readAsText(file);
+        });
+    </script>
 </body>
 </html>
