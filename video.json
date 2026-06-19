@@ -22,18 +22,214 @@
       },
       "questions": [
         {
-          "type": "mcq",
-          "timestamp": 5,
+          "type": "essay",
+          "timestamp": 264,
           "maxPoints": 10,
-          "text": "What color is the sky?",
+          "text": "What is this story about? (Write at least two sentences.) 這個故事講的是什麼？ （至少寫兩句話。）",
+          "options": [
+            "",
+            "",
+            "",
+            ""
+          ],
+          "correctAnswer": "",
+          "hint": ""
+        },
+        {
+          "type": "identification",
+          "timestamp": 255,
+          "maxPoints": 10,
+          "text": "After school, the child is very tired and needs to take a _____.",
+          "options": [
+            "",
+            "",
+            "",
+            ""
+          ],
+          "correctAnswer": 0,
+          "hint": ""
+        },
+        {
+          "type": "mcq",
+          "timestamp": 230,
+          "maxPoints": 10,
+          "text": "Why is the Color Monster the best model for painting class?",
+          "options": [
+            "He can sit still.",
+            "He is very tall.",
+            "He can change color.",
+            "He has big eyes."
+          ],
+          "correctAnswer": 2,
+          "hint": ""
+        },
+        {
+          "type": "identification",
+          "timestamp": 214,
+          "maxPoints": 10,
+          "text": "In the gym, the kids have fun jumping on the _____.",
+          "options": [
+            "",
+            "",
+            "",
+            ""
+          ],
+          "correctAnswer": 0,
+          "hint": ""
+        },
+        {
+          "type": "mcq",
+          "timestamp": 200,
+          "maxPoints": 10,
+          "text": "What food do they eat for lunch?",
+          "options": [
+            "Bread and soup",
+            "Apple and juice",
+            "Pizza and juice",
+            "Cake and tea"
+          ],
+          "correctAnswer": 0,
+          "hint": ""
+        },
+        {
+          "type": "mcq",
+          "timestamp": 179,
+          "maxPoints": 10,
+          "text": "Before lunch, what do the kids wash?",
+          "options": [
+            "Feet",
+            "Hands",
+            "Faces",
+            "Hair"
+          ],
+          "correctAnswer": 2,
+          "hint": ""
+        },
+        {
+          "type": "identification",
+          "timestamp": 164,
+          "maxPoints": 10,
+          "text": "At the playground, the kids want a turn on the _____.",
+          "options": [
+            "",
+            "",
+            "",
+            ""
+          ],
+          "correctAnswer": 0,
+          "hint": ""
+        },
+        {
+          "type": "mcq",
+          "timestamp": 152,
+          "maxPoints": 10,
+          "text": "What does Miss Edwards read to the class?",
+          "options": [
+            "A map",
+            "A letter",
+            "A song",
+            "A story"
+          ],
+          "correctAnswer": 3,
+          "hint": ""
+        },
+        {
+          "type": "mcq",
+          "timestamp": 140,
+          "maxPoints": 10,
+          "text": "What is the first class in the morning?",
+          "options": [
+            "Art",
+            "Music",
+            "Science",
+            "Math"
+          ],
+          "correctAnswer": 1,
+          "hint": ""
+        },
+        {
+          "type": "mcq",
+          "timestamp": 126,
+          "maxPoints": 10,
+          "text": "How does the Colour Monster feel when he first meets his new classmates?",
+          "options": [
+            "Happy",
+            "Angry",
+            "Scared",
+            "Sleepy"
+          ],
+          "correctAnswer": 2,
+          "hint": ""
+        },
+        {
+          "type": "mcq",
+          "timestamp": 93,
+          "maxPoints": 10,
+          "text": "The name of the teacher is Miss _____.",
+          "options": [
+            "Joy",
+            "Emma",
+            "Edwards",
+            "Teresa"
+          ],
+          "correctAnswer": 2,
+          "hint": ""
+        },
+        {
+          "type": "identification",
+          "timestamp": 73,
+          "maxPoints": 10,
+          "text": "The boy says the monster only needs a coat and a _____.",
+          "options": [
+            "",
+            "",
+            "",
+            ""
+          ],
+          "correctAnswer": 0,
+          "hint": ""
+        },
+        {
+          "type": "mcq",
+          "timestamp": 65,
+          "maxPoints": 10,
+          "text": "What is one funny thing the Color Monster wants to pack in his rucksack?",
+          "options": [
+            "Banana",
+            "Pillow",
+            "Clock",
+            "Torch"
+          ],
+          "correctAnswer": 3,
+          "hint": ""
+        },
+        {
+          "type": "mcq",
+          "timestamp": 44,
+          "maxPoints": 10,
+          "text": "The Colour Monster asks if school is a spooky ______.",
+          "options": [
+            "Castle",
+            "Tree",
+            "House",
+            "Box"
+          ],
+          "correctAnswer": 0,
+          "hint": ""
+        },
+        {
+          "type": "identification",
+          "timestamp": 24,
+          "maxPoints": 10,
+          "text": "Where is the Color Monster going today?",
           "options": [
             "Green",
             "Blue",
             "Red",
             "Yellow"
           ],
-          "correctAnswer": 1,
-          "hint": "Look up on a bright day!"
+          "correctAnswer": 0,
+          "hint": ""
         }
       ]
     }
