@@ -46,7 +46,7 @@
             "",
             ""
           ],
-          "correctAnswer": 0,
+          "correctAnswer": "nap",
           "hint": ""
         },
         {
@@ -74,7 +74,7 @@
             "",
             ""
           ],
-          "correctAnswer": 0,
+          "correctAnswer": "monster",
           "hint": ""
         },
         {
@@ -116,7 +116,7 @@
             "",
             ""
           ],
-          "correctAnswer": 0,
+          "correctAnswer": "swing",
           "hint": ""
         },
         {
@@ -186,7 +186,7 @@
             "",
             ""
           ],
-          "correctAnswer": 0,
+          "correctAnswer": "notebook",
           "hint": ""
         },
         {
@@ -221,14 +221,14 @@
           "type": "identification",
           "timestamp": 24,
           "maxPoints": 10,
-          "text": "Where is the Color Monster going today?",
+          "text": "Where is the Colour Monster going today?",
           "options": [
             "Green",
             "Blue",
             "Red",
             "Yellow"
           ],
-          "correctAnswer": 0,
+          "correctAnswer": "school",
           "hint": ""
         }
       ]
