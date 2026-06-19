@@ -199,7 +199,7 @@
                     <label>Video Type:</label>
                     <select id="t-video-type">
                         <option value="youtube">YouTube</option>
-                        <option value="local">MP4 File Link</option>
+                        <option value="local">MP4 File Link (e.g., Raw GitHub Link)</option>
                     </select>
                     <label>YouTube ID or MP4 Link:</label>
                     <input type="text" id="t-video-source" placeholder="e.g. dQw4w9WgXcQ">
@@ -218,10 +218,18 @@
                     
                     <hr style="margin: 15px 0; border: 0; border-top: 1px solid #cbd5e1;">
                     
-                    <label>JSON Backup Data:</label>
+                    <label>Fetch from GitHub (Raw JSON URL):</label>
+                    <div class="flex-between" style="gap:10px; margin-top:5px;">
+                        <input type="text" id="github-url" placeholder="https://raw.githubusercontent.com/...">
+                        <button id="btn-fetch-github" class="btn secondary small" style="white-space:nowrap;">🔄 Fetch</button>
+                    </div>
+
+                    <hr style="margin: 15px 0; border: 0; border-top: 1px dashed #cbd5e1;">
+
+                    <label>Local JSON Backup Data:</label>
                     <div class="btn-group mt-10">
-                        <button id="btn-export-json" class="btn primary small" style="flex:1;">📥 Export JSON</button>
-                        <label for="import-json" class="btn secondary small" style="flex:1; text-align:center; display:block;">📤 Import JSON</label>
+                        <button id="btn-export-json" class="btn primary small" style="flex:1;">📥 Export</button>
+                        <label for="import-json" class="btn secondary small" style="flex:1; text-align:center; display:block;">📤 Import</label>
                         <input type="file" id="import-json" accept=".json" class="hidden">
                         <a id="download-anchor" class="hidden"></a>
                     </div>
@@ -243,6 +251,14 @@
 
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
+        // ==========================================
+        // 🔄 AUTO-FETCH GITHUB URL
+        // Paste your RAW GitHub JSON link inside the quotes below to auto-sync for students
+        // e.g. "https://raw.githubusercontent.com/username/repo/main/quiz-data.json"
+        // ==========================================
+        const AUTO_FETCH_URL = ""; 
+
+
         const DEFAULT_DATA = {
             pin: "1234",
             videoSource: "dQw4w9WgXcQ", 
@@ -261,7 +277,11 @@
         };
 
         let appData = JSON.parse(localStorage.getItem('quizAppDataKids')) || DEFAULT_DATA;
-        appData.questions.forEach(q => { if(!q.maxPoints) q.maxPoints = 10; });
+        
+        function sanitizeData() {
+            appData.questions.forEach(q => { if(!q.maxPoints) q.maxPoints = 10; });
+        }
+        sanitizeData();
 
         function saveToLocalStorage() { localStorage.setItem('quizAppDataKids', JSON.stringify(appData)); }
 
@@ -271,6 +291,7 @@
         let timeCheckerInterval;
         let activeQuestionIndex = -1;
         let questionAppearedTime = 0; 
+        let initPending = true;
 
         // Players
         let ytPlayer = null;
@@ -280,11 +301,39 @@
         const tHtml5Player = document.getElementById('t-html5-player');
 
         // ==========================================
+        // AUTO-FETCH LOGIC ON LOAD
+        // ==========================================
+        window.onload = async () => { 
+            const urlParams = new URLSearchParams(window.location.search);
+            const targetUrl = urlParams.get('config') || AUTO_FETCH_URL;
+
+            if (targetUrl) {
+                try {
+                    const response = await fetch(targetUrl);
+                    if (response.ok) {
+                        appData = await response.json();
+                        sanitizeData();
+                        saveToLocalStorage();
+                    }
+                } catch (e) {
+                    console.error("Auto-fetch failed", e);
+                }
+            }
+            
+            initPending = false;
+            
+            // Start video player based on fetched/local type
+            if (appData.videoType === 'local') initVideoPlayer(); 
+            else if (appData.videoType === 'youtube' && isYtApiReady) initVideoPlayer();
+        };
+
+
+        // ==========================================
         // VIDEO LOGIC
         // ==========================================
         function onYouTubeIframeAPIReady() {
             isYtApiReady = true;
-            if (appData.videoType === 'youtube') initVideoPlayer();
+            if (appData.videoType === 'youtube' && !initPending) initVideoPlayer();
         }
 
         function initVideoPlayer() {
@@ -298,7 +347,7 @@
             if (appData.videoType === 'local') {
                 if (ytPlayer) ytPlayer.stopVideo();
                 html5Player.src = appData.videoSource;
-                html5Player.controls = true; // Use native controls for local fallback
+                html5Player.controls = true; 
                 html5Player.classList.remove('hidden');
             } else if (appData.videoType === 'youtube' && isYtApiReady) {
                 html5Player.pause();
@@ -511,6 +560,25 @@
             initVideoPlayer();
         };
 
+        // GITHUB FETCH IN DASHBOARD
+        document.getElementById('btn-fetch-github').addEventListener('click', async () => {
+            const url = document.getElementById('github-url').value;
+            if(!url) return alert("Please enter a valid RAW GitHub URL.");
+            try {
+                const response = await fetch(url);
+                if(response.ok) {
+                    appData = await response.json();
+                    sanitizeData();
+                    saveToLocalStorage();
+                    alert("Data fetched successfully from GitHub!");
+                    renderTeacherDashboard();
+                    loadTeacherVideoPreview();
+                } else {
+                    alert("Failed to fetch. Make sure it's the RAW JSON link.");
+                }
+            } catch(e) { alert("Error fetching data: " + e.message); }
+        });
+
         // JSON BACKUP LOGIC
         document.getElementById('btn-export-json').addEventListener('click', () => {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
@@ -525,6 +593,7 @@
             reader.onload = function(e) {
                 try {
                     appData = JSON.parse(e.target.result);
+                    sanitizeData();
                     saveToLocalStorage();
                     alert("Backup imported successfully!");
                     renderTeacherDashboard();
@@ -636,14 +705,10 @@
         }
 
         document.getElementById('btn-add-question').onclick = () => {
-            // unshift() adds the new question to the TOP of the array
             appData.questions.unshift({ type: "mcq", timestamp: 0, maxPoints: 10, text: "New Question", options: ["1", "2", "3", "4"], correctAnswer: 0, hint: "" });
             saveToLocalStorage();
             renderTeacherDashboard();
         }
-
-        // Init App
-        window.onload = () => { if (appData.videoType === 'local') initVideoPlayer(); };
     </script>
 </body>
 </html>
