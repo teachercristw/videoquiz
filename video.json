@@ -35,7 +35,8 @@
           "correctAnswer": "",
           "hint": "",
           "timer": 120,
-          "minPoints": 5
+          "minPoints": 5,
+          "hasTimer": false
         },
         {
           "type": "identification",
@@ -51,7 +52,8 @@
           "correctAnswer": "nap",
           "hint": "",
           "timer": 20,
-          "minPoints": 1
+          "minPoints": 1,
+          "hasTimer": true
         },
         {
           "type": "mcq",
@@ -67,7 +69,8 @@
           "correctAnswer": 2,
           "hint": "",
           "timer": 10,
-          "minPoints": 1
+          "minPoints": 1,
+          "hasTimer": true
         },
         {
           "type": "identification",
@@ -83,7 +86,8 @@
           "correctAnswer": "colour monster",
           "hint": "",
           "timer": 25,
-          "minPoints": 1
+          "minPoints": 1,
+          "hasTimer": true
         },
         {
           "type": "mcq",
@@ -99,7 +103,8 @@
           "correctAnswer": 0,
           "hint": "",
           "timer": 10,
-          "minPoints": 1
+          "minPoints": 1,
+          "hasTimer": true
         },
         {
           "type": "mcq",
@@ -115,7 +120,8 @@
           "correctAnswer": 2,
           "hint": "",
           "timer": 10,
-          "minPoints": 1
+          "minPoints": 1,
+          "hasTimer": true
         },
         {
           "type": "identification",
@@ -131,7 +137,8 @@
           "correctAnswer": "swing",
           "hint": "",
           "timer": 20,
-          "minPoints": 1
+          "minPoints": 1,
+          "hasTimer": true
         },
         {
           "type": "mcq",
@@ -147,7 +154,8 @@
           "correctAnswer": 3,
           "hint": "",
           "timer": 10,
-          "minPoints": 1
+          "minPoints": 1,
+          "hasTimer": true
         },
         {
           "type": "mcq",
@@ -163,7 +171,8 @@
           "correctAnswer": 1,
           "hint": "",
           "timer": 10,
-          "minPoints": 1
+          "minPoints": 1,
+          "hasTimer": true
         },
         {
           "type": "mcq",
@@ -179,7 +188,8 @@
           "correctAnswer": 2,
           "hint": "",
           "timer": 10,
-          "minPoints": 1
+          "minPoints": 1,
+          "hasTimer": true
         },
         {
           "type": "mcq",
@@ -195,7 +205,8 @@
           "correctAnswer": 2,
           "hint": "",
           "timer": 10,
-          "minPoints": 1
+          "minPoints": 1,
+          "hasTimer": true
         },
         {
           "type": "identification",
@@ -211,7 +222,8 @@
           "correctAnswer": "notebook",
           "hint": "",
           "timer": 20,
-          "minPoints": 1
+          "minPoints": 1,
+          "hasTimer": true
         },
         {
           "type": "mcq",
@@ -227,7 +239,8 @@
           "correctAnswer": 3,
           "hint": "",
           "timer": 10,
-          "minPoints": 1
+          "minPoints": 1,
+          "hasTimer": true
         },
         {
           "type": "mcq",
@@ -243,7 +256,8 @@
           "correctAnswer": 0,
           "hint": "",
           "timer": 10,
-          "minPoints": 1
+          "minPoints": 1,
+          "hasTimer": true
         },
         {
           "type": "identification",
@@ -259,10 +273,12 @@
           "correctAnswer": "school",
           "hint": "",
           "timer": 20,
-          "minPoints": 1
+          "minPoints": 1,
+          "hasTimer": true
         }
       ],
-      "passingScore": 70
+      "passingScore": 100,
+      "passingRequirementType": "score"
     }
   ]
 }
