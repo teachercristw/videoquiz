@@ -33,7 +33,9 @@
             ""
           ],
           "correctAnswer": "",
-          "hint": ""
+          "hint": "",
+          "timer": 120,
+          "minPoints": 5
         },
         {
           "type": "identification",
@@ -47,7 +49,9 @@
             ""
           ],
           "correctAnswer": "nap",
-          "hint": ""
+          "hint": "",
+          "timer": 20,
+          "minPoints": 1
         },
         {
           "type": "mcq",
@@ -61,7 +65,9 @@
             "He has big eyes."
           ],
           "correctAnswer": 2,
-          "hint": ""
+          "hint": "",
+          "timer": 10,
+          "minPoints": 1
         },
         {
           "type": "identification",
@@ -75,7 +81,9 @@
             ""
           ],
           "correctAnswer": "colour monster",
-          "hint": ""
+          "hint": "",
+          "timer": 25,
+          "minPoints": 1
         },
         {
           "type": "mcq",
@@ -89,7 +97,9 @@
             "Cake and tea"
           ],
           "correctAnswer": 0,
-          "hint": ""
+          "hint": "",
+          "timer": 10,
+          "minPoints": 1
         },
         {
           "type": "mcq",
@@ -103,7 +113,9 @@
             "Hair"
           ],
           "correctAnswer": 2,
-          "hint": ""
+          "hint": "",
+          "timer": 10,
+          "minPoints": 1
         },
         {
           "type": "identification",
@@ -117,7 +129,9 @@
             ""
           ],
           "correctAnswer": "swing",
-          "hint": ""
+          "hint": "",
+          "timer": 20,
+          "minPoints": 1
         },
         {
           "type": "mcq",
@@ -131,7 +145,9 @@
             "A story"
           ],
           "correctAnswer": 3,
-          "hint": ""
+          "hint": "",
+          "timer": 10,
+          "minPoints": 1
         },
         {
           "type": "mcq",
@@ -145,7 +161,9 @@
             "Math"
           ],
           "correctAnswer": 1,
-          "hint": ""
+          "hint": "",
+          "timer": 10,
+          "minPoints": 1
         },
         {
           "type": "mcq",
@@ -159,7 +177,9 @@
             "Sleepy"
           ],
           "correctAnswer": 2,
-          "hint": ""
+          "hint": "",
+          "timer": 10,
+          "minPoints": 1
         },
         {
           "type": "mcq",
@@ -173,7 +193,9 @@
             "Teresa"
           ],
           "correctAnswer": 2,
-          "hint": ""
+          "hint": "",
+          "timer": 10,
+          "minPoints": 1
         },
         {
           "type": "identification",
@@ -187,7 +209,9 @@
             ""
           ],
           "correctAnswer": "notebook",
-          "hint": ""
+          "hint": "",
+          "timer": 20,
+          "minPoints": 1
         },
         {
           "type": "mcq",
@@ -201,7 +225,9 @@
             "Torch"
           ],
           "correctAnswer": 3,
-          "hint": ""
+          "hint": "",
+          "timer": 10,
+          "minPoints": 1
         },
         {
           "type": "mcq",
@@ -215,7 +241,9 @@
             "Box"
           ],
           "correctAnswer": 0,
-          "hint": ""
+          "hint": "",
+          "timer": 10,
+          "minPoints": 1
         },
         {
           "type": "identification",
@@ -229,9 +257,12 @@
             "Yellow"
           ],
           "correctAnswer": "school",
-          "hint": ""
+          "hint": "",
+          "timer": 20,
+          "minPoints": 1
         }
-      ]
+      ],
+      "passingScore": 70
     }
   ]
 }
