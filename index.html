@@ -331,6 +331,18 @@
 
         function saveToLocalStorage() { localStorage.setItem('quizAppDataKids', JSON.stringify(appData)); }
 
+        // Core syncing function to prevent export data loss
+        function syncDashboardToAppData() {
+            appData.pin = document.getElementById('t-pin').value || appData.pin;
+            appData.videoType = document.getElementById('t-video-type').value;
+            appData.videoSource = document.getElementById('t-video-source').value;
+            appData.webhookUrl = document.getElementById('t-webhook').value;
+            
+            appData.controls.playPause = document.getElementById('t-ctrl-play').checked;
+            appData.controls.rewind = document.getElementById('t-ctrl-rewind').checked;
+            appData.controls.forward = document.getElementById('t-ctrl-forward').checked;
+        }
+
         // State
         let currentScore = 0;
         let answeredQuestions = new Set(); 
@@ -372,7 +384,6 @@
             document.getElementById('group-rewind').classList.toggle('hidden', !appData.controls.rewind);
             document.getElementById('group-forward').classList.toggle('hidden', !appData.controls.forward);
             
-            // If Local MP4, hide native controls if play/pause is disabled so they can't bypass
             if (appData.videoType === 'local') {
                 html5Player.controls = appData.controls.playPause; 
             }
@@ -407,7 +418,6 @@
                 if (ytPlayer) {
                     ytPlayer.loadVideoById(appData.videoSource);
                 } else {
-                    // Hide YT native controls to enforce our restrictions
                     ytPlayer = new YT.Player('youtube-player', {
                         videoId: appData.videoSource,
                         playerVars: { 'controls': 0, 'rel': 0, 'playsinline': 1, 'disablekb': 1 }
@@ -425,9 +435,7 @@
             const currentTime = getCurrentTime();
             let newTime = currentTime + seconds;
 
-            // FORWARD BARRIER LOGIC
             if (seconds > 0) {
-                // Find all questions ahead of current time that haven't been answered
                 let upcomingQs = appData.questions
                     .map((q, idx) => ({ ...q, originalIndex: idx }))
                     .filter(q => q.timestamp > currentTime && !answeredQuestions.has(q.originalIndex))
@@ -435,14 +443,12 @@
 
                 if (upcomingQs.length > 0) {
                     const nextQTimestamp = upcomingQs[0].timestamp;
-                    // If the jump passes the question, force it to land exactly on the question
                     if (newTime >= nextQTimestamp) {
                         newTime = nextQTimestamp;
                     }
                 }
             }
 
-            // Apply the new time
             if (appData.videoType === 'local') {
                 html5Player.currentTime = Math.max(0, newTime);
             } else if (appData.videoType === 'youtube' && ytPlayer) {
@@ -459,7 +465,6 @@
         function checkVideoTime() {
             const currentTime = getCurrentTime();
             appData.questions.forEach((q, index) => {
-                // Buffer of 1 second to catch it
                 if (currentTime >= q.timestamp && currentTime <= q.timestamp + 1 && !answeredQuestions.has(index) && activeQuestionIndex === -1) {
                     triggerQuiz(q, index);
                 }
@@ -603,7 +608,6 @@
                 date: new Date().toLocaleString()
             };
 
-            // If Webhook exists, try to send to Google Sheets
             if (appData.webhookUrl) {
                 try {
                     await fetch(appData.webhookUrl, {
@@ -620,7 +624,6 @@
                 }
             }
 
-            // Fallback: Download Local Report
             const reportText = `STUDENT SCORE REPORT\nName: ${payload.name}\nClass: ${payload.className}\nScore: ${payload.score} Stars\nDate: ${payload.date}`;
             const dataStr = "data:text/plain;charset=utf-8," + encodeURIComponent(reportText);
             const dl = document.getElementById('download-anchor');
@@ -681,15 +684,7 @@
         }
 
         document.getElementById('btn-exit-teacher').onclick = () => {
-            appData.pin = document.getElementById('t-pin').value || appData.pin;
-            appData.videoType = document.getElementById('t-video-type').value;
-            appData.videoSource = document.getElementById('t-video-source').value;
-            appData.webhookUrl = document.getElementById('t-webhook').value;
-            
-            appData.controls.playPause = document.getElementById('t-ctrl-play').checked;
-            appData.controls.rewind = document.getElementById('t-ctrl-rewind').checked;
-            appData.controls.forward = document.getElementById('t-ctrl-forward').checked;
-
+            syncDashboardToAppData(); // Fixes missing data on exit
             saveToLocalStorage();
             
             if(ytTeacherPlayer) ytTeacherPlayer.stopVideo();
@@ -702,6 +697,7 @@
 
         // JSON BACKUP LOGIC
         document.getElementById('btn-export-json').addEventListener('click', () => {
+            syncDashboardToAppData(); // Forces input sync right before export
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
             const dl = document.getElementById('download-anchor');
             dl.setAttribute("href", dataStr); dl.setAttribute("download", "video-lesson-backup.json"); dl.click();
@@ -725,10 +721,10 @@
         });
 
         function renderTeacherDashboard() {
-            document.getElementById('t-pin').value = appData.pin;
-            document.getElementById('t-video-type').value = appData.videoType;
-            document.getElementById('t-video-source').value = appData.videoSource;
-            document.getElementById('t-webhook').value = appData.webhookUrl;
+            document.getElementById('t-pin').value = appData.pin || "";
+            document.getElementById('t-video-type').value = appData.videoType || "youtube";
+            document.getElementById('t-video-source').value = appData.videoSource || "";
+            document.getElementById('t-webhook').value = appData.webhookUrl || "";
 
             document.getElementById('t-ctrl-play').checked = appData.controls.playPause;
             document.getElementById('t-ctrl-rewind').checked = appData.controls.rewind;
