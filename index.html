@@ -196,9 +196,6 @@
 </head>
 <body>
 
-    <!-- ========================================== -->
-    <!-- HOMEPAGE (LANDING VIEW)                    -->
-    <!-- ========================================== -->
     <main id="home-view" class="container">
         <div class="welcome-hero">
             <h1 id="welcome-title">Interactive Learning Hub</h1>
@@ -211,14 +208,10 @@
         </div>
 
         <div id="lesson-cards-container" class="lesson-grid">
-            <!-- Populated via Javascript -->
-        </div>
+            </div>
     </main>
 
 
-    <!-- ========================================== -->
-    <!-- STUDENT ACTIVITY VIEW                      -->
-    <!-- ========================================== -->
     <main id="student-view" class="container hidden">
         
         <header class="app-header">
@@ -256,7 +249,6 @@
             </div>
         </div>
 
-        <!-- Quiz Area -->
         <div id="quiz-area" class="quiz-panel hidden">
             <h2 id="quiz-question">Question?</h2>
             <span class="points-indicator">⏱️ Answer quickly for more points! (Max: <span id="quiz-max-points">10</span> Pts)</span>
@@ -270,7 +262,6 @@
 
     </main>
 
-    <!-- Save Data Modal -->
     <div id="save-modal" class="modal-overlay hidden">
         <div class="modal-content">
             <h2>🎉 Lesson Complete!</h2>
@@ -292,7 +283,6 @@
         </div>
     </div>
 
-    <!-- Teacher Login Modal -->
     <div id="pin-modal" class="modal-overlay hidden">
         <div class="modal-content">
             <h2>Teacher Dashboard</h2>
@@ -307,9 +297,6 @@
 
     <button id="btn-teacher-login" class="gear-icon">⚙️</button>
 
-    <!-- ========================================== -->
-    <!-- TEACHER DASHBOARD                          -->
-    <!-- ========================================== -->
     <div id="teacher-view" class="teacher-container hidden">
         <header class="app-header">
             <h1>⚙️ Teacher Workspace</h1>
@@ -319,14 +306,11 @@
             </div>
         </header>
 
-        <!-- Lesson Selectors (Tabs) -->
         <div id="dashboard-tabs-bar" class="dashboard-tabs">
-            <!-- Populated via Javascript -->
-        </div>
+            </div>
 
         <div class="teacher-layout">
             
-            <!-- LEFT PANEL (Sticky Video & Settings) -->
             <div class="sticky-panel">
                 <div class="teacher-panel">
                     <div class="flex-between" style="align-items: flex-start;">
@@ -388,7 +372,6 @@
                 </div>
             </div>
 
-            <!-- RIGHT PANEL (Questions List) -->
             <div class="teacher-panel" style="background: transparent; border: none; padding: 0;">
                 <div class="flex-between" style="background: var(--card-bg); padding: 15px 20px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 20px;">
                     <h3 style="color:#fff;">4. Questions Manager</h3>
@@ -396,16 +379,12 @@
                 </div>
                 
                 <div id="questions-list">
-                    <!-- Populated by JS -->
-                </div>
+                    </div>
             </div>
 
         </div>
     </div>
 
-    <!-- ========================================== -->
-    <!-- JAVASCRIPT LOGIC                           -->
-    <!-- ========================================== -->
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
         // System Data Structure mapping multiple separate lessons
@@ -475,7 +454,32 @@
         const html5Player = document.getElementById('html5-player');
         const tHtml5Player = document.getElementById('t-html5-player');
 
-        window.onload = () => {
+        // ==========================================
+        // GITHUB SYNC AND INITIALIZATION
+        // ==========================================
+        window.onload = async () => {
+            // Specific GitHub RAW link to fetch data
+            const githubRawUrl = "https://raw.githubusercontent.com/teachercristw/videoquiz/refs/heads/main/video.json";
+
+            try {
+                // The "?t=" + Date.now() bypasses browser cache so students always see the latest updates instantly
+                const response = await fetch(githubRawUrl + "?t=" + Date.now());
+                if (!response.ok) throw new Error("Network response was not ok");
+                
+                const fetchedData = await response.json();
+                
+                // Overwrite the local app data with the fresh GitHub data
+                globalData = fetchedData;
+                sanitizeData();
+                saveToLocalStorage();
+                console.log("Successfully synced latest lesson data from GitHub!");
+                
+            } catch (error) {
+                console.error("Failed to fetch from GitHub, falling back to offline saved data:", error);
+                // If offline or blocked, it safely uses the last known localStorage state
+            }
+
+            // Render the page with the applied data
             document.getElementById('home-total-score').textContent = cumulativeScore;
             renderHomepage();
         };
