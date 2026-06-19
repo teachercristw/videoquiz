@@ -101,8 +101,9 @@
             box-shadow: 0 15px 30px rgba(56, 189, 248, 0.15), inset 0 0 20px rgba(56, 189, 248, 0.05); 
         }
         .lesson-card h3 { font-size: 1.3rem; margin-bottom: 10px; color: #fff; }
-        .lesson-meta { font-size: 0.95rem; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center; margin-top: 15px;}
+        .lesson-meta { font-size: 0.95rem; color: var(--text-muted); display: flex; justify-content: flex-start; align-items: center; margin-top: 15px; gap: 8px; flex-wrap: wrap;}
         .badge { background: rgba(51, 65, 85, 0.8); padding: 4px 12px; border-radius: 20px; font-weight: 800; color: #fbbf24;}
+        .badge.muted { color: var(--text-muted); border: 1px solid var(--border-color); }
 
         /* Header */
         .app-header {
@@ -287,7 +288,7 @@
         <div id="student-controls" class="controls">
             <div id="group-rewind" class="control-group hidden">
                 <button class="btn btn-rw micro ctrl-btn" onclick="skipTime(-10)">⏪ -10s</button>
-                <button class="btn btn-rw micro ctrl-btn" onclick="skipTime(-5)">----5s</button>
+                <button class="btn btn-rw micro ctrl-btn" onclick="skipTime(-5)">⏪ -5s</button>
             </div>
             
             <div id="group-playpause" class="control-group hidden" style="background: transparent; border: none; padding: 0;">
@@ -376,8 +377,14 @@
                     <label>Lesson Title:</label>
                     <input type="text" id="t-lesson-title" oninput="updateActiveLessonConfig('title', this.value)">
                     
-                    <label>Required Passing Score (%):</label>
-                    <input type="number" id="t-passing-score" min="0" max="100" placeholder="e.g. 70" oninput="updateActiveLessonConfig('passingScore', this.value)">
+                    <label>Passing Requirement:</label>
+                    <div style="display: flex; gap: 10px; margin-top: 5px;">
+                        <select id="t-pass-type" onchange="updateActiveLessonConfig('passingRequirementType', this.value)" style="flex: 1; margin-top: 0;">
+                            <option value="percent">Percentage (%)</option>
+                            <option value="score">Raw Score</option>
+                        </select>
+                        <input type="number" id="t-passing-score" min="0" placeholder="e.g. 70" oninput="updateActiveLessonConfig('passingScore', this.value)" style="flex: 1; margin-top: 0;">
+                    </div>
 
                     <label>Video Type:</label>
                     <select id="t-video-type" onchange="updateActiveLessonConfig('videoType', this.value); loadTeacherVideoPreview();">
@@ -415,7 +422,7 @@
 
                 <div class="teacher-panel">
                     <h3 style="color:#fff;">3. Backup & Security</h3>
-                    <label>Dashboard PIN:</label>
+                    <label>Dashboard/Grading PIN:</label>
                     <input type="text" id="t-pin" oninput="updateGlobalConfig('pin', this.value)">
                     <hr style="margin: 20px 0; border: 0; border-top: 1px dashed var(--border-color);">
                     <label>System JSON File:</label>
@@ -448,9 +455,9 @@
             webhookUrl: "",
             lessons: [{
                 id: "lesson_1", title: "Science Lesson: Solar System", videoSource: "dQw4w9WgXcQ", videoType: "youtube",
-                passingScore: 70,
+                passingScore: 70, passingRequirementType: 'percent',
                 controls: { playPause: true, rewind: true, forward: true },
-                questions: [{ type: "mcq", timestamp: 5, timer: 15, maxPoints: 10, minPoints: 2, text: "What color is the sky?", options: ["Green", "Blue", "Red", "Yellow"], correctAnswer: 1, hint: "Look up on a bright day!" }]
+                questions: [{ type: "mcq", timestamp: 5, timer: 15, maxPoints: 10, minPoints: 2, hasTimer: true, text: "What color is the sky?", options: ["Green", "Blue", "Red", "Yellow"], correctAnswer: 1, hint: "Look up on a bright day!" }]
             }]
         };
 
@@ -464,9 +471,12 @@
                 if(!l.id) l.id = "lesson_" + Date.now() + Math.random().toString(36).substr(2, 5);
                 if(!l.controls) l.controls = { playPause: true, rewind: true, forward: true };
                 if(l.passingScore === undefined) l.passingScore = 0;
+                if(!l.passingRequirementType) l.passingRequirementType = 'percent';
+                
                 l.questions.forEach(q => { 
                     q.timestamp = Number(q.timestamp) || 0;
-                    q.timer = Number(q.timer) || 10; // Ensures older JSON data gets a default timer
+                    if(q.hasTimer === undefined) q.hasTimer = true;
+                    q.timer = Number(q.timer) || 10;
                     q.maxPoints = Number(q.maxPoints) || 10;
                     if(q.minPoints === undefined) q.minPoints = 2; 
                     q.minPoints = Number(q.minPoints);
@@ -487,7 +497,7 @@
         let answeredQuestions = new Set(); 
         let timeCheckerInterval;
         let activeQuestionIndex = -1;
-        let questionStartTime = 0; // Silent timestamp tracker
+        let questionStartTime = 0; 
         let ytPlayer = null; let ytTeacherPlayer = null; let isYtApiReady = false;
         
         const html5Player = document.getElementById('html5-player');
@@ -523,14 +533,18 @@
             globalData.lessons.forEach(lesson => {
                 const card = document.createElement('div');
                 card.className = 'lesson-card';
+                
+                const maxPts = lesson.questions.reduce((sum, q) => sum + (Number(q.maxPoints) || 0), 0);
+                const passTypeStr = lesson.passingRequirementType === 'score' ? 'Pts' : '%';
+                
                 card.innerHTML = `
                     <div>
                         <h3>${lesson.title || 'Untitled Lesson'}</h3>
-                        <p style="font-size:0.9rem; color:var(--text-muted)">Type: ${lesson.videoType === 'youtube' ? 'YouTube' : 'Video File'}</p>
                     </div>
                     <div class="lesson-meta">
-                        <span>❓ ${lesson.questions.length} Questions</span>
-                        <span class="badge">Pass: ${lesson.passingScore || 0}%</span>
+                        <span class="badge muted">❓ ${lesson.questions.length} Questions</span>
+                        <span class="badge muted">⭐ Max: ${maxPts} Pts</span>
+                        <span class="badge">Pass: ${lesson.passingScore || 0}${passTypeStr}</span>
                     </div>
                 `;
                 card.onclick = () => launchLesson(lesson);
@@ -649,8 +663,6 @@
         function triggerQuiz(q, index) {
             pauseVideo(); 
             activeQuestionIndex = index;
-            
-            // Start the silent timestamp tracker
             questionStartTime = Date.now();
 
             const area = document.getElementById('quiz-area');
@@ -680,13 +692,64 @@
                     grid.appendChild(btn);
                 });
                 answerArea.appendChild(grid);
-            } else {
+            } else if (q.type === 'identification') {
                 answerArea.innerHTML = `
                     <input type="text" id="student-text-input" class="text-answer-input" placeholder="Type your answer here...">
                     <button class="btn btn-action" onclick="checkTextAnswer(this)">Submit Answer</button>
                     <p id="empty-warning" class="hidden mt-10" style="color: var(--btn-danger); font-weight: bold;">Please type an answer first!</p>
                 `;
+            } else if (q.type === 'essay') {
+                answerArea.innerHTML = `
+                    <p class="mt-10 mb-20" style="color:var(--accent-glow); font-size:1.2rem; font-weight:bold;">📝 Write your answer, then show it to the teacher!</p>
+                    <textarea id="student-text-input" class="text-answer-input" rows="5" placeholder="Type your answer here..."></textarea>
+                    
+                    <div id="teacher-unlock-section" class="mt-20" style="background: rgba(15,23,42,0.8); padding:20px; border-radius:12px; border: 1px dashed var(--border-color); text-align: left;">
+                        <p style="color:var(--text-muted); font-size:0.95rem; font-weight:bold; margin-bottom:10px;">🔒 Teacher Grading Area</p>
+                        
+                        <div id="teacher-pin-area" style="display:flex; gap:10px; align-items:center;">
+                            <input type="password" id="essay-pin" placeholder="Enter Teacher PIN" class="text-answer-input" style="margin:0; width:60%;">
+                            <button class="btn btn-action" onclick="unlockEssayGrading()">Unlock</button>
+                        </div>
+                        <p id="essay-pin-error" class="hidden" style="color:var(--btn-danger); margin-top:10px; font-weight:bold;">Incorrect PIN!</p>
+                        
+                        <div id="teacher-grade-area" class="hidden" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                            <label style="color:#fff; font-weight:bold; white-space:nowrap;">Points to Award (Max ${q.maxPoints}):</label>
+                            <input type="number" id="essay-points" max="${q.maxPoints}" min="0" value="${q.maxPoints}" class="text-answer-input" style="margin:0; width:100px;">
+                            <button class="btn btn-play" onclick="submitEssayGrade(this)">Submit Grade</button>
+                        </div>
+                    </div>
+                `;
             }
+        }
+
+        window.unlockEssayGrading = function() {
+            const pin = document.getElementById('essay-pin').value;
+            if(pin === globalData.pin) {
+                document.getElementById('teacher-pin-area').classList.add('hidden');
+                document.getElementById('essay-pin-error').classList.add('hidden');
+                document.getElementById('teacher-grade-area').classList.remove('hidden');
+            } else {
+                document.getElementById('essay-pin-error').classList.remove('hidden');
+            }
+        }
+
+        window.submitEssayGrade = function(btn) {
+            const ptsInput = document.getElementById('essay-points');
+            let awarded = parseInt(ptsInput.value) || 0;
+            const q = currentActiveLesson.questions[activeQuestionIndex];
+            
+            awarded = Math.max(0, Math.min(awarded, q.maxPoints)); 
+            
+            currentScore += awarded;
+            document.getElementById('score-display').textContent = currentScore;
+            
+            const fb = document.getElementById('quiz-feedback');
+            fb.innerHTML = `✨ Teacher awarded <strong>+${awarded}</strong> Points!`;
+            fb.style.color = "var(--btn-play)"; fb.classList.remove('hidden');
+            
+            document.getElementById('btn-continue-video').classList.remove('hidden');
+            document.getElementById('student-text-input').disabled = true;
+            ptsInput.disabled = true; btn.disabled = true;
         }
 
         document.getElementById('btn-hint').onclick = () => document.getElementById('quiz-hint').classList.remove('hidden');
@@ -704,25 +767,14 @@
             const warning = document.getElementById('empty-warning');
             const ans = inputField.value.trim();
             
-            if (!ans) { 
-                warning.classList.remove('hidden'); 
-                return; 
-            }
+            if (!ans) { warning.classList.remove('hidden'); return; }
             warning.classList.add('hidden');
-            btnElement.disabled = true;
-            inputField.disabled = true;
+            btnElement.disabled = true; inputField.disabled = true;
 
             const q = currentActiveLesson.questions[activeQuestionIndex];
-            let isCorrect = false;
-
-            if (q.type === 'essay') {
-                isCorrect = true; 
-            } else if (q.type === 'identification') {
-                const correctStr = (q.correctAnswer || '').toString().toLowerCase().trim();
-                if (ans.toLowerCase() === correctStr) isCorrect = true;
-            }
-
-            if (isCorrect) handleCorrect(null);
+            const correctStr = (q.correctAnswer || '').toString().toLowerCase().trim();
+            
+            if (ans.toLowerCase() === correctStr) handleCorrect(null);
             else handleWrong(null, null);
         };
 
@@ -730,28 +782,30 @@
             if(btnClicked) btnClicked.classList.add('correct');
             const q = currentActiveLesson.questions[activeQuestionIndex];
             
-            // Calculate dynamic linear deduction
             const timeTakenSec = (Date.now() - questionStartTime) / 1000;
             const timerLimit = Number(q.timer) || 10;
             const maxP = Number(q.maxPoints) || 10;
             const minP = Number(q.minPoints) || 0;
 
             let pointsEarned = maxP;
-            if (timeTakenSec >= timerLimit) {
-                pointsEarned = minP;
-            } else {
-                const deductionFraction = timeTakenSec / timerLimit;
-                pointsEarned = maxP - ((maxP - minP) * deductionFraction);
+            let timeMessage = "";
+
+            if (q.hasTimer !== false) {
+                if (timeTakenSec >= timerLimit) {
+                    pointsEarned = minP;
+                } else {
+                    const deductionFraction = timeTakenSec / timerLimit;
+                    pointsEarned = maxP - ((maxP - minP) * deductionFraction);
+                }
+                pointsEarned = Math.round(Math.max(minP, Math.min(maxP, pointsEarned)));
+                timeMessage = `<br><span style="font-size:0.9rem; color:var(--text-muted);">(Answered in ${timeTakenSec.toFixed(1)}s)</span>`;
             }
-            
-            // Lock between Min and Max, and round to nearest whole number
-            pointsEarned = Math.round(Math.max(minP, Math.min(maxP, pointsEarned)));
 
             currentScore += pointsEarned;
             document.getElementById('score-display').textContent = currentScore;
             
             const fb = document.getElementById('quiz-feedback');
-            fb.innerHTML = `✨ Correct! You earned <strong>+${pointsEarned}</strong> Points! <br><span style="font-size:0.9rem; color:var(--text-muted);">(Answered in ${timeTakenSec.toFixed(1)}s)</span>`;
+            fb.innerHTML = `✨ Correct! You earned <strong>+${pointsEarned}</strong> Points! ${timeMessage}`;
             fb.style.color = "var(--btn-play)"; fb.classList.remove('hidden');
             
             document.getElementById('btn-continue-video').classList.remove('hidden');
@@ -784,8 +838,20 @@
             
             const totalPossible = currentActiveLesson.questions.reduce((sum, q) => sum + (Number(q.maxPoints) || 10), 0);
             const percentage = totalPossible > 0 ? Math.round((currentScore / totalPossible) * 100) : 100;
+            const passingType = currentActiveLesson.passingRequirementType || 'percent';
             const passingScore = currentActiveLesson.passingScore || 0;
             
+            let passed = false;
+            let passMessage = "";
+            
+            if (passingType === 'percent') {
+                passed = percentage >= passingScore;
+                passMessage = `You need ${passingScore}% to pass.`;
+            } else {
+                passed = currentScore >= passingScore;
+                passMessage = `You need ${passingScore} Points to pass.`;
+            }
+
             document.getElementById('final-score-display').textContent = `${currentScore} / ${totalPossible} Pts (${percentage}%)`;
             
             const modal = document.getElementById('save-modal');
@@ -794,12 +860,12 @@
             const btnRetry = document.getElementById('btn-retry-lesson');
             const statusLabel = document.getElementById('save-status');
             
-            if (percentage < passingScore) {
+            if (!passed) {
                 inputsDiv.classList.add('hidden');
                 btnSave.classList.add('hidden');
                 btnRetry.classList.remove('hidden');
                 
-                statusLabel.textContent = `You need ${passingScore}% to pass. Please try again!`;
+                statusLabel.textContent = `${passMessage} Please try again!`;
                 statusLabel.style.color = "var(--btn-danger)";
                 statusLabel.classList.remove('hidden');
             } else {
@@ -888,6 +954,7 @@
             document.getElementById('t-pin').value = globalData.pin || "";
             document.getElementById('t-webhook').value = globalData.webhookUrl || "";
             document.getElementById('t-lesson-title').value = currentLesson.title || "";
+            document.getElementById('t-pass-type').value = currentLesson.passingRequirementType || "percent";
             document.getElementById('t-passing-score').value = currentLesson.passingScore || 0;
             document.getElementById('t-video-type').value = currentLesson.videoType || "youtube";
             document.getElementById('t-video-source').value = currentLesson.videoSource || "";
@@ -916,7 +983,29 @@
                     `;
                 } else if (q.type === 'identification') {
                     answerHTML = `<label>Correct Answer (Exact Match):</label><input type="text" value="${q.correctAnswer || ''}" onchange="updateQ(${idx}, 'correctAnswer', this.value)">`;
+                } else if (q.type === 'essay') {
+                    answerHTML = `<p style="color:var(--text-muted); font-size:0.9rem; margin-top:10px;"><em>Essay questions will be manually graded by the teacher during the video.</em></p>`;
                 }
+
+                let timerFields = q.hasTimer !== false ? `
+                    <div style="flex:1; min-width: 90px;">
+                        <label>Timer (Sec):</label>
+                        <input type="number" value="${q.timer || 10}" min="1" onchange="updateQ(${idx}, 'timer', this.value)">
+                    </div>
+                    <div style="flex:1; min-width: 90px;">
+                        <label>Max Pts:</label>
+                        <input type="number" value="${q.maxPoints || 10}" min="1" onchange="updateQ(${idx}, 'maxPoints', this.value)">
+                    </div>
+                    <div style="flex:1; min-width: 90px;">
+                        <label>Min Pts:</label>
+                        <input type="number" value="${q.minPoints || 0}" min="0" onchange="updateQ(${idx}, 'minPoints', this.value)">
+                    </div>
+                ` : `
+                    <div style="flex:1; min-width: 90px;">
+                        <label>Points:</label>
+                        <input type="number" value="${q.maxPoints || 10}" min="1" onchange="updateQ(${idx}, 'maxPoints', this.value)">
+                    </div>
+                `;
 
                 div.innerHTML = `
                     <div class="q-header">
@@ -929,25 +1018,17 @@
                             <select onchange="changeQType(${idx}, this.value)">
                                 <option value="mcq" ${q.type === 'mcq' ? 'selected' : ''}>Multiple Choice</option>
                                 <option value="identification" ${q.type === 'identification' ? 'selected' : ''}>Type Answer</option>
-                                <option value="essay" ${q.type === 'essay' ? 'selected' : ''}>Any Answer (Essay)</option>
+                                <option value="essay" ${q.type === 'essay' ? 'selected' : ''}>Essay (Teacher Graded)</option>
                             </select>
                         </div>
                         <div style="flex:1; min-width: 90px;">
                             <label>Show at (Sec):</label>
                             <input type="number" id="ts-${idx}" value="${q.timestamp}" onchange="updateQ(${idx}, 'timestamp', this.value)">
                         </div>
-                        <div style="flex:1; min-width: 90px;">
-                            <label>Timer (Sec):</label>
-                            <input type="number" value="${q.timer || 10}" min="1" onchange="updateQ(${idx}, 'timer', this.value)">
+                        <div style="flex:1; min-width: 100px; padding-bottom:10px;">
+                            <label style="display:flex; align-items:center; gap:5px; cursor:pointer;"><input type="checkbox" ${q.hasTimer !== false ? 'checked' : ''} onchange="updateQTimerToggle(${idx}, this.checked)" style="width:auto; margin:0;"> Use Timer</label>
                         </div>
-                        <div style="flex:1; min-width: 90px;">
-                            <label>Max Pts:</label>
-                            <input type="number" value="${q.maxPoints || 10}" min="1" onchange="updateQ(${idx}, 'maxPoints', this.value)">
-                        </div>
-                        <div style="flex:1; min-width: 90px;">
-                            <label>Min Pts:</label>
-                            <input type="number" value="${q.minPoints || 0}" min="0" onchange="updateQ(${idx}, 'minPoints', this.value)">
-                        </div>
+                        ${timerFields}
                         <button class="btn btn-gray small" onclick="grabTime(${idx})" style="height:44px; margin-top:5px;">⏱️ Get Time</button>
                     </div>
                     <div class="mt-10">
@@ -995,6 +1076,11 @@
         window.updateActiveLessonControl = function(controlField, isChecked) { globalData.lessons[teacherActiveLessonIndex].controls[controlField] = isChecked; saveToLocalStorage(); };
         window.updateGlobalConfig = function(field, value) { globalData[field] = value; saveToLocalStorage(); };
 
+        window.updateQTimerToggle = function(idx, isChecked) {
+            globalData.lessons[teacherActiveLessonIndex].questions[idx].hasTimer = isChecked;
+            saveToLocalStorage(); renderTeacherDashboard();
+        }
+
         window.updateQ = function(idx, field, val) {
             const currentLesson = globalData.lessons[teacherActiveLessonIndex];
             if (field === 'timestamp' || field === 'maxPoints' || field === 'minPoints' || field === 'timer') currentLesson.questions[idx][field] = parseInt(val, 10) || 0;
@@ -1016,14 +1102,14 @@
         window.deleteQ = function(idx) { globalData.lessons[teacherActiveLessonIndex].questions.splice(idx, 1); saveToLocalStorage(); renderTeacherDashboard(); };
 
         document.getElementById('btn-add-question').onclick = () => {
-            globalData.lessons[teacherActiveLessonIndex].questions.push({ type: "mcq", timestamp: 0, timer: 10, maxPoints: 10, minPoints: 2, text: "New Question Text", options: ["", "", "", ""], correctAnswer: 0, hint: "" });
+            globalData.lessons[teacherActiveLessonIndex].questions.push({ type: "mcq", timestamp: 0, timer: 10, maxPoints: 10, minPoints: 2, hasTimer: true, text: "New Question Text", options: ["", "", "", ""], correctAnswer: 0, hint: "" });
             saveToLocalStorage(); renderTeacherDashboard();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         };
 
         document.getElementById('btn-add-lesson').onclick = () => {
             globalData.lessons.push({
-                id: "lesson_" + Date.now(), title: "New Assignment", videoSource: "dQw4w9WgXcQ", videoType: "youtube", passingScore: 70,
+                id: "lesson_" + Date.now(), title: "New Assignment", videoSource: "dQw4w9WgXcQ", videoType: "youtube", passingScore: 70, passingRequirementType: "percent",
                 controls: { playPause: true, rewind: true, forward: true }, questions: []
             });
             saveToLocalStorage(); teacherActiveLessonIndex = globalData.lessons.length - 1;
