@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Video Quiz</title>
+    <title>Sophisticated Multi-Lesson Portal</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
     
     <style>
@@ -33,11 +33,32 @@
         .hidden { display: none !important; }
         .mt-10 { margin-top: 10px; }
         .mt-20 { margin-top: 20px; }
+        .mb-20 { margin-bottom: 20px; }
         .flex-between { display: flex; justify-content: space-between; align-items: center; }
 
         /* Containers */
         .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
         .teacher-container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+
+        /* Welcome / Home Screen Layout */
+        .welcome-hero {
+            background: linear-gradient(135deg, #1e1b4b 0%, #1e293b 100%);
+            border: 1px solid var(--border-color); padding: 40px; border-radius: 16px;
+            text-align: center; margin-bottom: 30px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5);
+        }
+        .welcome-hero h1 { font-size: 2.5rem; margin-bottom: 10px; }
+        .welcome-hero p { color: var(--text-muted); font-size: 1.2rem; }
+        
+        .lesson-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .lesson-card {
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            border-radius: 12px; padding: 25px; cursor: pointer; transition: all 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2); display: flex; flex-direction: column; justify-content: space-between;
+        }
+        .lesson-card:hover { transform: translateY(-4px); border-color: var(--btn-fw); box-shadow: 0 12px 20px rgba(0,0,0,0.4); }
+        .lesson-card h3 { font-size: 1.3rem; margin-bottom: 10px; color: #fff; }
+        .lesson-meta { font-size: 0.9rem; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center; margin-top: 15px;}
+        .badge { background: #334155; padding: 4px 10px; border-radius: 20px; font-weight: 800; color: #fbbf24;}
 
         /* Header */
         .app-header {
@@ -130,6 +151,14 @@
         .feedback-text { font-size: 1.3rem; font-weight: 800; margin-top: 20px; }
         .hint-text { margin-top: 15px; font-size: 1.1rem; font-weight: 600; color: #fef08a; background: rgba(234, 179, 8, 0.2); padding: 10px; border-radius: 8px; border: 1px solid #eab308; }
 
+        /* Tabs Panel for Multi-Lesson Dashboard */
+        .dashboard-tabs { display: flex; gap: 8px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; }
+        .tab-btn {
+            background: #1e293b; color: var(--text-muted); border: 1px solid var(--border-color);
+            padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; white-space: nowrap;
+        }
+        .tab-btn.active { background: var(--btn-action); color: #fff; border-color: var(--btn-action); }
+
         /* Teacher Dashboard Layout */
         .teacher-layout { display: grid; grid-template-columns: 400px 1fr; gap: 20px; align-items: start; }
         @media (max-width: 900px) { .teacher-layout { grid-template-columns: 1fr; } }
@@ -167,10 +196,36 @@
 </head>
 <body>
 
-    <main id="student-view" class="container">
+    <!-- ========================================== -->
+    <!-- HOMEPAGE (LANDING VIEW)                    -->
+    <!-- ========================================== -->
+    <main id="home-view" class="container">
+        <div class="welcome-hero">
+            <h1 id="welcome-title">Interactive Learning Hub</h1>
+            <p>Select an assignment below to watch the lesson video and test your skills!</p>
+        </div>
+
+        <div class="flex-between mb-20">
+            <h2 style="font-size: 1.5rem;">🎒 Available Lessons</h2>
+            <div style="font-size: 1.1rem; color: #fbbf24; font-weight: bold;">Total Score: <span id="home-total-score">0</span> Pts</div>
+        </div>
+
+        <div id="lesson-cards-container" class="lesson-grid">
+            <!-- Populated via Javascript -->
+        </div>
+    </main>
+
+
+    <!-- ========================================== -->
+    <!-- STUDENT ACTIVITY VIEW                      -->
+    <!-- ========================================== -->
+    <main id="student-view" class="container hidden">
         
         <header class="app-header">
-            <h1 id="app-title">Video Lesson</h1>
+            <div>
+                <button id="btn-back-home" class="btn btn-gray small" style="margin-right: 15px;">⬅️ Home</button>
+                <h1 id="app-title" style="display:inline-block; vertical-align:middle;">Video Lesson</h1>
+            </div>
             <div class="score-board">
                 <span>Score: <span id="score-display">0</span> Pts</span>
                 <button id="btn-finish" class="btn btn-finish small hidden">🏁 Finish Lesson</button>
@@ -201,6 +256,7 @@
             </div>
         </div>
 
+        <!-- Quiz Area -->
         <div id="quiz-area" class="quiz-panel hidden">
             <h2 id="quiz-question">Question?</h2>
             <span class="points-indicator">⏱️ Answer quickly for more points! (Max: <span id="quiz-max-points">10</span> Pts)</span>
@@ -214,10 +270,11 @@
 
     </main>
 
+    <!-- Save Data Modal -->
     <div id="save-modal" class="modal-overlay hidden">
         <div class="modal-content">
             <h2>🎉 Lesson Complete!</h2>
-            <p style="margin-top:10px; font-size:1.2rem; color: var(--text-muted);">Final Score: <strong id="final-score-display" style="color:#fbbf24;">0</strong> Pts</p>
+            <p style="margin-top:10px; font-size:1.2rem; color: var(--text-muted);">Lesson Score: <strong id="final-score-display" style="color:#fbbf24;">0</strong> Pts</p>
             
             <div style="text-align: left; margin-top: 20px;">
                 <label style="font-weight:bold; color:var(--text-muted);">Student Name:</label>
@@ -235,6 +292,7 @@
         </div>
     </div>
 
+    <!-- Teacher Login Modal -->
     <div id="pin-modal" class="modal-overlay hidden">
         <div class="modal-content">
             <h2>Teacher Dashboard</h2>
@@ -249,24 +307,42 @@
 
     <button id="btn-teacher-login" class="gear-icon">⚙️</button>
 
+    <!-- ========================================== -->
+    <!-- TEACHER DASHBOARD                          -->
+    <!-- ========================================== -->
     <div id="teacher-view" class="teacher-container hidden">
         <header class="app-header">
-            <h1>⚙️ Teacher Settings</h1>
-            <button id="btn-exit-teacher" class="btn btn-action">Save & Return to Lesson</button>
+            <h1>⚙️ Teacher Workspace</h1>
+            <div>
+                <button id="btn-add-lesson" class="btn btn-play small" style="margin-right: 10px;">📦 Create New Lesson</button>
+                <button id="btn-exit-teacher" class="btn btn-action">Save & Close Dashboard</button>
+            </div>
         </header>
+
+        <!-- Lesson Selectors (Tabs) -->
+        <div id="dashboard-tabs-bar" class="dashboard-tabs">
+            <!-- Populated via Javascript -->
+        </div>
 
         <div class="teacher-layout">
             
+            <!-- LEFT PANEL (Sticky Video & Settings) -->
             <div class="sticky-panel">
                 <div class="teacher-panel">
-                    <h3 style="margin-bottom:10px; color:#fff;">1. Video Source</h3>
-                    <label>Video Type:</label>
-                    <select id="t-video-type">
+                    <div class="flex-between" style="align-items: flex-start;">
+                        <h3 style="color:#fff;">1. Lesson Identity</h3>
+                        <button id="btn-delete-lesson" class="btn btn-danger micro">🗑️ Delete Lesson</button>
+                    </div>
+                    <label>Lesson Title:</label>
+                    <input type="text" id="t-lesson-title" oninput="updateActiveLessonConfig('title', this.value)">
+                    
+                    <label style="margin-top:15px;">Video Type:</label>
+                    <select id="t-video-type" onchange="updateActiveLessonConfig('videoType', this.value); loadTeacherVideoPreview();">
                         <option value="youtube">YouTube</option>
                         <option value="local">MP4 File Link</option>
                     </select>
                     <label>YouTube ID or MP4 Link:</label>
-                    <input type="text" id="t-video-source" placeholder="e.g. dQw4w9WgXcQ">
+                    <input type="text" id="t-video-source" oninput="updateActiveLessonConfig('videoSource', this.value)">
                     <button class="btn btn-gray small mt-10" onclick="loadTeacherVideoPreview()" style="width:100%;">🔄 Load Preview</button>
                     
                     <div class="video-container mt-10">
@@ -280,29 +356,29 @@
                     
                     <div class="toggle-switch">
                         <label style="margin:0;">Allow Play & Pause</label>
-                        <input type="checkbox" id="t-ctrl-play">
+                        <input type="checkbox" id="t-ctrl-play" onchange="updateActiveLessonControl('playPause', this.checked)">
                     </div>
                     <div class="toggle-switch">
                         <label style="margin:0;">Allow Rewind (Back)</label>
-                        <input type="checkbox" id="t-ctrl-rewind">
+                        <input type="checkbox" id="t-ctrl-rewind" onchange="updateActiveLessonControl('rewind', this.checked)">
                     </div>
                     <div class="toggle-switch">
                         <label style="margin:0;">Allow Fast-Forward</label>
-                        <input type="checkbox" id="t-ctrl-forward">
+                        <input type="checkbox" id="t-ctrl-forward" onchange="updateActiveLessonControl('forward', this.checked)">
                     </div>
 
                     <label class="mt-10">Google Apps Script Webhook URL:</label>
-                    <input type="text" id="t-webhook" placeholder="https://script.google.com/...">
+                    <input type="text" id="t-webhook" oninput="updateGlobalConfig('webhookUrl', this.value)">
                 </div>
 
                 <div class="teacher-panel">
                     <h3 style="color:#fff;">3. Security & Backup</h3>
                     <label>Dashboard PIN:</label>
-                    <input type="text" id="t-pin">
+                    <input type="text" id="t-pin" oninput="updateGlobalConfig('pin', this.value)">
                     
                     <hr style="margin: 15px 0; border: 0; border-top: 1px dashed var(--border-color);">
 
-                    <label>Backup / Restore JSON Data:</label>
+                    <label>Backup / Restore System JSON:</label>
                     <div class="flex-between mt-10" style="gap:10px;">
                         <button id="btn-export-json" class="btn btn-action small" style="flex:1;">📥 Export</button>
                         <label for="import-json" class="btn btn-gray small" style="flex:1; text-align:center; display:block; cursor:pointer;">📤 Import</label>
@@ -312,6 +388,7 @@
                 </div>
             </div>
 
+            <!-- RIGHT PANEL (Questions List) -->
             <div class="teacher-panel" style="background: transparent; border: none; padding: 0;">
                 <div class="flex-between" style="background: var(--card-bg); padding: 15px 20px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 20px;">
                     <h3 style="color:#fff;">4. Questions Manager</h3>
@@ -319,172 +396,214 @@
                 </div>
                 
                 <div id="questions-list">
-                    </div>
+                    <!-- Populated by JS -->
+                </div>
             </div>
 
         </div>
     </div>
 
+    <!-- ========================================== -->
+    <!-- JAVASCRIPT LOGIC                           -->
+    <!-- ========================================== -->
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
-        const AUTO_FETCH_URL = ""; 
-
-        const DEFAULT_DATA = {
+        // System Data Structure mapping multiple separate lessons
+        const DEFAULT_GLOBAL_DATA = {
             pin: "1234",
-            videoSource: "dQw4w9WgXcQ", 
-            videoType: "youtube",
             webhookUrl: "",
-            controls: { playPause: true, rewind: true, forward: true },
-            questions: [
+            lessons: [
                 {
-                    type: "mcq",
-                    timestamp: 5,
-                    maxPoints: 10,
-                    text: "What color is the sky?",
-                    options: ["Green", "Blue", "Red", "Yellow"],
-                    correctAnswer: 1, 
-                    hint: "Look up!"
+                    id: "lesson_1",
+                    title: "Science Lesson: Solar System",
+                    videoSource: "dQw4w9WgXcQ", 
+                    videoType: "youtube",
+                    controls: { playPause: true, rewind: true, forward: true },
+                    questions: [
+                        {
+                            type: "mcq",
+                            timestamp: 5,
+                            maxPoints: 10,
+                            text: "What color is the sky?",
+                            options: ["Green", "Blue", "Red", "Yellow"],
+                            correctAnswer: 1, 
+                            hint: "Look up on a bright day!"
+                        }
+                    ]
                 }
             ]
         };
 
-        let appData = JSON.parse(localStorage.getItem('quizAppDataKids')) || DEFAULT_DATA;
+        let globalData = JSON.parse(localStorage.getItem('quizAppMultiLessonData')) || DEFAULT_GLOBAL_DATA;
+        let cumulativeScore = JSON.parse(localStorage.getItem('quizAppCumulativeScore')) || 0;
         
         function sanitizeData() {
-            if(!appData.controls) appData.controls = { playPause: true, rewind: true, forward: true };
-            if(appData.webhookUrl === undefined) appData.webhookUrl = "";
-            appData.questions.forEach(q => { 
-                q.timestamp = Number(q.timestamp) || 0; // Fixes string bugs
-                q.maxPoints = Number(q.maxPoints) || 10;
-                q.correctAnswer = (q.type === 'mcq') ? Number(q.correctAnswer) : q.correctAnswer;
+            if(!globalData.lessons || globalData.lessons.length === 0) {
+                globalData.lessons = [...DEFAULT_GLOBAL_DATA.lessons];
+            }
+            if(globalData.webhookUrl === undefined) globalData.webhookUrl = "";
+            globalData.lessons.forEach(l => {
+                if(!l.id) l.id = "lesson_" + Date.now() + Math.random().toString(36).substr(2, 5);
+                if(!l.controls) l.controls = { playPause: true, rewind: true, forward: true };
+                l.questions.forEach(q => { 
+                    q.timestamp = Number(q.timestamp) || 0;
+                    q.maxPoints = Number(q.maxPoints) || 10;
+                    q.correctAnswer = (q.type === 'mcq') ? Number(q.correctAnswer) : q.correctAnswer;
+                });
             });
         }
         sanitizeData();
 
-        function saveToLocalStorage() { localStorage.setItem('quizAppDataKids', JSON.stringify(appData)); }
-
-        function syncDashboardToAppData() {
-            appData.pin = document.getElementById('t-pin').value || appData.pin;
-            appData.videoType = document.getElementById('t-video-type').value;
-            appData.videoSource = document.getElementById('t-video-source').value;
-            appData.webhookUrl = document.getElementById('t-webhook').value;
-            
-            appData.controls.playPause = document.getElementById('t-ctrl-play').checked;
-            appData.controls.rewind = document.getElementById('t-ctrl-rewind').checked;
-            appData.controls.forward = document.getElementById('t-ctrl-forward').checked;
+        function saveToLocalStorage() { 
+            localStorage.setItem('quizAppMultiLessonData', JSON.stringify(globalData)); 
+            localStorage.setItem('quizAppCumulativeScore', JSON.stringify(cumulativeScore));
         }
 
-        // State
+        // Active operational state values
+        let currentActiveLesson = globalData.lessons[0];
+        let teacherActiveLessonIndex = 0;
         let currentScore = 0;
         let answeredQuestions = new Set(); 
         let timeCheckerInterval;
         let activeQuestionIndex = -1;
         let questionAppearedTime = 0; 
-        let initPending = true;
 
-        // Players
+        // Video Players Setup
         let ytPlayer = null;
         let ytTeacherPlayer = null;
         let isYtApiReady = false;
         const html5Player = document.getElementById('html5-player');
         const tHtml5Player = document.getElementById('t-html5-player');
 
+        window.onload = () => {
+            document.getElementById('home-total-score').textContent = cumulativeScore;
+            renderHomepage();
+        };
+
         // ==========================================
-        // INIT LOGIC
+        // HOMEPAGE VIEW RENDERING
         // ==========================================
-        window.onload = async () => { 
-            const targetUrl = AUTO_FETCH_URL;
-            if (targetUrl) {
-                try {
-                    const response = await fetch(targetUrl);
-                    if (response.ok) {
-                        appData = await response.json();
-                        sanitizeData();
-                        saveToLocalStorage();
-                    }
-                } catch (e) { console.error("Auto-fetch failed", e); }
-            }
-            initPending = false;
+        function renderHomepage() {
+            const container = document.getElementById('lesson-cards-container');
+            container.innerHTML = '';
             
-            if (appData.videoType === 'local') initVideoPlayer(); 
-            else if (appData.videoType === 'youtube' && isYtApiReady) initVideoPlayer();
+            globalData.lessons.forEach(lesson => {
+                const totalPoints = lesson.questions.reduce((sum, q) => sum + (Number(q.maxPoints) || 10), 0);
+                
+                const card = document.createElement('div');
+                card.className = 'lesson-card';
+                card.innerHTML = `
+                    <div>
+                        <h3>${lesson.title || 'Untitled Lesson'}</h3>
+                        <p style="font-size:0.95rem; color:var(--text-muted)">Video Type: ${lesson.videoType === 'youtube' ? 'YouTube' : 'MP4 File'}</p>
+                    </div>
+                    <div class="lesson-meta">
+                        <span>❓ ${lesson.questions.length} Questions</span>
+                        <span class="badge">${totalPoints} Max Pts</span>
+                    </div>
+                `;
+                card.onclick = () => launchLesson(lesson);
+                container.appendChild(card);
+            });
+        }
+
+        function launchLesson(lesson) {
+            currentActiveLesson = lesson;
+            document.getElementById('home-view').classList.add('hidden');
+            document.getElementById('student-view').classList.remove('hidden');
+            
+            document.getElementById('app-title').textContent = lesson.title || "Video Lesson";
+            currentScore = 0;
+            document.getElementById('score-display').textContent = currentScore;
+            
+            initVideoPlayer();
+        }
+
+        document.getElementById('btn-back-home').onclick = () => {
+            clearInterval(timeCheckerInterval);
+            if(ytPlayer) ytPlayer.stopVideo();
+            html5Player.pause();
+            
+            document.getElementById('student-view').classList.add('hidden');
+            document.getElementById('quiz-area').classList.add('hidden');
+            document.getElementById('home-view').classList.remove('hidden');
+            document.getElementById('home-total-score').textContent = cumulativeScore;
+            renderHomepage();
         };
 
         function applyStudentControlsUI() {
-            document.getElementById('group-playpause').classList.toggle('hidden', !appData.controls.playPause);
-            document.getElementById('group-rewind').classList.toggle('hidden', !appData.controls.rewind);
-            document.getElementById('group-forward').classList.toggle('hidden', !appData.controls.forward);
+            document.getElementById('group-playpause').classList.toggle('hidden', !currentActiveLesson.controls.playPause);
+            document.getElementById('group-rewind').classList.toggle('hidden', !currentActiveLesson.controls.rewind);
+            document.getElementById('group-forward').classList.toggle('hidden', !currentActiveLesson.controls.forward);
             
-            if (appData.videoType === 'local') {
-                html5Player.controls = appData.controls.playPause; 
+            if (currentActiveLesson.videoType === 'local') {
+                html5Player.controls = currentActiveLesson.controls.playPause; 
             }
         }
 
         // ==========================================
-        // VIDEO LOGIC
+        // SYSTEM IFRAME VIDEO PLAYBACK LOGIC
         // ==========================================
         function onYouTubeIframeAPIReady() {
             isYtApiReady = true;
-            if (appData.videoType === 'youtube' && !initPending) initVideoPlayer();
         }
 
         function initVideoPlayer() {
             clearInterval(timeCheckerInterval);
             answeredQuestions.clear();
             document.getElementById('quiz-area').classList.add('hidden');
-            document.getElementById('btn-finish').classList.add('hidden'); // Hide finish button at start
+            document.getElementById('btn-finish').classList.add('hidden');
             
             html5Player.classList.add('hidden');
             document.getElementById('youtube-player').classList.add('hidden');
 
             applyStudentControlsUI();
 
-            if (appData.videoType === 'local') {
+            if (currentActiveLesson.videoType === 'local') {
                 if (ytPlayer) ytPlayer.stopVideo();
-                html5Player.src = appData.videoSource;
+                html5Player.src = currentActiveLesson.videoSource;
                 html5Player.classList.remove('hidden');
-            } else if (appData.videoType === 'youtube' && isYtApiReady) {
+            } else if (currentActiveLesson.videoType === 'youtube') {
                 html5Player.pause();
                 document.getElementById('youtube-player').classList.remove('hidden');
 
-                if (ytPlayer) {
-                    ytPlayer.loadVideoById(appData.videoSource);
+                if (ytPlayer && typeof ytPlayer.loadVideoById === 'function') {
+                    ytPlayer.loadVideoById(currentActiveLesson.videoSource);
                 } else {
                     ytPlayer = new YT.Player('youtube-player', {
-                        videoId: appData.videoSource,
-                        playerVars: { 'controls': 0, 'rel': 0, 'playsinline': 1, 'disablekb': 1 }
+                        videoId: currentActiveLesson.videoSource,
+                        playerVars: { 'controls': 0, 'rel': 0, 'playsinline': 1, 'disablekb': 1 },
+                        events: {
+                            'onReady': (e) => { e.target.playVideo(); }
+                        }
                     });
                 }
             }
-            // Runs rapidly (every 250ms) to ensure no questions are missed
             timeCheckerInterval = setInterval(checkVideoTime, 250);
         }
 
-        function getCurrentTime() { return appData.videoType === 'local' ? html5Player.currentTime : (ytPlayer?.getCurrentTime() || 0); }
-        function playVideo() { appData.videoType === 'local' ? html5Player.play() : ytPlayer?.playVideo(); }
-        function pauseVideo() { appData.videoType === 'local' ? html5Player.pause() : ytPlayer?.pauseVideo(); }
+        function getCurrentTime() { return currentActiveLesson.videoType === 'local' ? html5Player.currentTime : (ytPlayer?.getCurrentTime() || 0); }
+        function playVideo() { currentActiveLesson.videoType === 'local' ? html5Player.play() : ytPlayer?.playVideo(); }
+        function pauseVideo() { currentActiveLesson.videoType === 'local' ? html5Player.pause() : ytPlayer?.pauseVideo(); }
 
         window.skipTime = function(seconds) {
             const currentTime = getCurrentTime();
             let newTime = currentTime + seconds;
 
             if (seconds > 0) {
-                let upcomingQs = appData.questions
+                let upcomingQs = currentActiveLesson.questions
                     .map((q, idx) => ({ ...q, originalIndex: idx }))
                     .filter(q => q.timestamp > currentTime && !answeredQuestions.has(q.originalIndex))
                     .sort((a, b) => a.timestamp - b.timestamp);
 
-                if (upcomingQs.length > 0) {
-                    const nextQTimestamp = upcomingQs[0].timestamp;
-                    if (newTime >= nextQTimestamp) {
-                        newTime = nextQTimestamp; // Snap directly to the question
-                    }
+                if (upcomingQs.length > 0 && newTime >= upcomingQs[0].timestamp) {
+                    newTime = upcomingQs[0].timestamp; 
                 }
             }
 
-            if (appData.videoType === 'local') {
+            if (currentActiveLesson.videoType === 'local') {
                 html5Player.currentTime = Math.max(0, newTime);
-            } else if (appData.videoType === 'youtube' && ytPlayer) {
+            } else if (currentActiveLesson.videoType === 'youtube' && ytPlayer) {
                 ytPlayer.seekTo(Math.max(0, newTime), true);
             }
         }
@@ -493,16 +612,15 @@
         document.getElementById('btn-pause').addEventListener('click', pauseVideo);
 
         // ==========================================
-        // QUIZ LOGIC
+        // STUDENT INTERACTIVE QUIZ LOGIC
         // ==========================================
         function checkVideoTime() {
             const currentTime = getCurrentTime();
             
-            // Look for any unanswered question where the current video time is equal to or past the timestamp
-            let passedQuestions = appData.questions
+            let passedQuestions = currentActiveLesson.questions
                 .map((q, index) => ({ ...q, originalIndex: index }))
                 .filter(q => currentTime >= q.timestamp && !answeredQuestions.has(q.originalIndex))
-                .sort((a, b) => a.timestamp - b.timestamp); // Prioritize the earliest missed question
+                .sort((a, b) => a.timestamp - b.timestamp);
 
             if (passedQuestions.length > 0 && activeQuestionIndex === -1) {
                 triggerQuiz(passedQuestions[0], passedQuestions[0].originalIndex);
@@ -555,7 +673,7 @@
         document.getElementById('btn-hint').onclick = () => document.getElementById('quiz-hint').classList.remove('hidden');
 
         function calculateEarnedPoints() {
-            const q = appData.questions[activeQuestionIndex];
+            const q = currentActiveLesson.questions[activeQuestionIndex];
             const timeTakenInSeconds = (Date.now() - questionAppearedTime) / 1000;
             let earned = q.maxPoints;
             if (timeTakenInSeconds > 5) {
@@ -574,7 +692,7 @@
 
         function checkTextAnswer(btnElement) {
             const ans = document.getElementById('student-text-input').value.trim();
-            const q = appData.questions[activeQuestionIndex];
+            const q = currentActiveLesson.questions[activeQuestionIndex];
             if (q.type === 'essay' && ans.length > 0) handleCorrect(null);
             else if (q.type === 'identification' && ans.toLowerCase() === q.correctAnswer.toLowerCase()) handleCorrect(null);
             else handleWrong(null, null);
@@ -609,16 +727,14 @@
             activeQuestionIndex = -1;
             document.getElementById('quiz-area').classList.add('hidden');
             
-            // Show Finish Button only if all questions are completed
-            if (answeredQuestions.size === appData.questions.length && appData.questions.length > 0) {
+            if (answeredQuestions.size === currentActiveLesson.questions.length && currentActiveLesson.questions.length > 0) {
                 document.getElementById('btn-finish').classList.remove('hidden');
             }
-            
             playVideo();
         }
 
         // ==========================================
-        // FINISH & SAVE LOGIC
+        // SUBMIT & SCORE PROFILE SHEET LOGIC
         // ==========================================
         document.getElementById('btn-finish').onclick = () => {
             pauseVideo();
@@ -645,42 +761,53 @@
             statusLabel.textContent = "Saving to Server...";
             statusLabel.classList.remove('hidden');
 
+            // Cumulative Global Leaderboard score allocation
+            cumulativeScore += currentScore;
+
             const payload = {
+                lessonId: currentActiveLesson.id,
+                lessonTitle: currentActiveLesson.title,
                 name: sName,
                 className: sClass,
                 score: currentScore,
                 date: new Date().toLocaleString()
             };
 
-            if (appData.webhookUrl) {
+            saveToLocalStorage();
+
+            if (globalData.webhookUrl) {
                 try {
-                    await fetch(appData.webhookUrl, {
+                    await fetch(globalData.webhookUrl, {
                         method: 'POST',
                         mode: 'no-cors',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(payload)
                     });
                     statusLabel.textContent = "✅ Successfully Saved!";
-                    setTimeout(() => document.getElementById('save-modal').classList.add('hidden'), 2000);
+                    setTimeout(() => {
+                        document.getElementById('save-modal').classList.add('hidden');
+                        document.getElementById('btn-back-home').click();
+                    }, 2000);
                     return;
-                } catch(e) {
-                    console.log("Webhook failed, falling back to download");
-                }
+                } catch(e) { console.error("Webhook submission missed redirection, applying text block."); }
             }
 
-            const reportText = `STUDENT SCORE REPORT\nName: ${payload.name}\nClass: ${payload.className}\nScore: ${payload.score} Points\nDate: ${payload.date}`;
+            const reportText = `STUDENT SCORE REPORT\nLesson: ${payload.lessonTitle}\nName: ${payload.name}\nClass: ${payload.className}\nScore: ${payload.score} Points\nDate: ${payload.date}`;
             const dataStr = "data:text/plain;charset=utf-8," + encodeURIComponent(reportText);
             const dl = document.getElementById('download-anchor');
             dl.setAttribute("href", dataStr); 
-            dl.setAttribute("download", `${payload.name}_Score_Report.txt`); 
+            dl.setAttribute("download", `${payload.name}_${payload.lessonId}_Report.txt`); 
             dl.click();
 
             statusLabel.textContent = "✅ Report Downloaded!";
-            setTimeout(() => document.getElementById('save-modal').classList.add('hidden'), 3000);
+            setTimeout(() => {
+                document.getElementById('save-modal').classList.add('hidden');
+                document.getElementById('btn-back-home').click();
+            }, 3000);
         };
 
         // ==========================================
-        // TEACHER DASHBOARD LOGIC
+        // TEACHER WORKSPACE INTERFACE LOGIC
         // ==========================================
         document.getElementById('btn-teacher-login').onclick = () => {
             pauseVideo();
@@ -689,11 +816,14 @@
         document.getElementById('btn-cancel-pin').onclick = () => document.getElementById('pin-modal').classList.add('hidden');
         
         document.getElementById('btn-submit-pin').onclick = () => {
-            if (document.getElementById('pin-input').value === appData.pin) {
+            if (document.getElementById('pin-input').value === globalData.pin) {
                 document.getElementById('pin-modal').classList.add('hidden');
+                document.getElementById('home-view').classList.add('hidden');
                 document.getElementById('student-view').classList.add('hidden');
                 document.getElementById('teacher-view').classList.remove('hidden');
                 document.getElementById('pin-input').value = '';
+                teacherActiveLessonIndex = 0;
+                renderTabsBar();
                 renderTeacherDashboard();
                 loadTeacherVideoPreview();
             } else {
@@ -701,99 +831,58 @@
             }
         };
 
-        function loadTeacherVideoPreview() {
-            const vType = document.getElementById('t-video-type').value;
-            const vSrc = document.getElementById('t-video-source').value;
+        function renderTabsBar() {
+            const tabsBar = document.getElementById('dashboard-tabs-bar');
+            tabsBar.innerHTML = '';
             
-            tHtml5Player.classList.add('hidden');
-            document.getElementById('t-youtube-player').classList.add('hidden');
-
-            if (vType === 'local') {
-                if (ytTeacherPlayer) ytTeacherPlayer.stopVideo();
-                tHtml5Player.src = vSrc;
-                tHtml5Player.classList.remove('hidden');
-            } else if (vType === 'youtube' && isYtApiReady) {
-                tHtml5Player.pause();
-                document.getElementById('t-youtube-player').classList.remove('hidden');
-                if (ytTeacherPlayer) ytTeacherPlayer.loadVideoById(vSrc);
-                else ytTeacherPlayer = new YT.Player('t-youtube-player', { videoId: vSrc, playerVars: {'controls':1} });
-            }
-        }
-
-        function getTeacherTime() {
-            const vType = document.getElementById('t-video-type').value;
-            if (vType === 'local') return Math.floor(tHtml5Player.currentTime);
-            if (vType === 'youtube' && ytTeacherPlayer) return Math.floor(ytTeacherPlayer.getCurrentTime());
-            return 0;
-        }
-
-        document.getElementById('btn-exit-teacher').onclick = () => {
-            syncDashboardToAppData(); 
-            saveToLocalStorage();
-            
-            if(ytTeacherPlayer) ytTeacherPlayer.stopVideo();
-            tHtml5Player.pause();
-
-            document.getElementById('teacher-view').classList.add('hidden');
-            document.getElementById('student-view').classList.remove('hidden');
-            initVideoPlayer();
-        };
-
-        // JSON BACKUP LOGIC
-        document.getElementById('btn-export-json').addEventListener('click', () => {
-            syncDashboardToAppData(); 
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
-            const dl = document.getElementById('download-anchor');
-            dl.setAttribute("href", dataStr); dl.setAttribute("download", "video-lesson-backup.json"); dl.click();
-        });
-
-        document.getElementById('import-json').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    appData = JSON.parse(e.target.result);
-                    sanitizeData();
-                    saveToLocalStorage();
-                    alert("Backup imported successfully!");
+            globalData.lessons.forEach((lesson, index) => {
+                const btn = document.createElement('button');
+                btn.className = `tab-btn ${index === teacherActiveLessonIndex ? 'active' : ''}`;
+                btn.textContent = lesson.title || `Lesson ${index + 1}`;
+                btn.onclick = () => {
+                    teacherActiveLessonIndex = index;
+                    renderTabsBar();
                     renderTeacherDashboard();
                     loadTeacherVideoPreview();
-                } catch(err) { alert("Invalid backup file format."); }
-            };
-            reader.readAsText(file);
-        });
+                };
+                tabsBar.appendChild(btn);
+            });
+        }
 
         function renderTeacherDashboard() {
-            document.getElementById('t-pin').value = appData.pin || "";
-            document.getElementById('t-video-type').value = appData.videoType || "youtube";
-            document.getElementById('t-video-source').value = appData.videoSource || "";
-            document.getElementById('t-webhook').value = appData.webhookUrl || "";
+            const currentLesson = globalData.lessons[teacherActiveLessonIndex];
+            
+            document.getElementById('t-pin').value = globalData.pin || "";
+            document.getElementById('t-webhook').value = globalData.webhookUrl || "";
+            
+            document.getElementById('t-lesson-title').value = currentLesson.title || "";
+            document.getElementById('t-video-type').value = currentLesson.videoType || "youtube";
+            document.getElementById('t-video-source').value = currentLesson.videoSource || "";
 
-            document.getElementById('t-ctrl-play').checked = appData.controls.playPause;
-            document.getElementById('t-ctrl-rewind').checked = appData.controls.rewind;
-            document.getElementById('t-ctrl-forward').checked = appData.controls.forward;
+            document.getElementById('t-ctrl-play').checked = currentLesson.controls.playPause;
+            document.getElementById('t-ctrl-rewind').checked = currentLesson.controls.rewind;
+            document.getElementById('t-ctrl-forward').checked = currentLesson.controls.forward;
 
             const list = document.getElementById('questions-list');
             list.innerHTML = '';
 
-            appData.questions.forEach((q, idx) => {
+            currentLesson.questions.forEach((q, idx) => {
                 const div = document.createElement('div');
                 div.className = 'q-box';
                 
                 let answerHTML = '';
                 if (q.type === 'mcq') {
                     answerHTML = `
-                        <label>Choices & Correct Answer (Click Radio Button):</label>
+                        <label>Choices & Correct Answer (Select True Circle Match):</label>
                         <div class="t-mcq-grid">
-                            <div class="t-mcq-item"><input type="radio" name="q${idx}" ${q.correctAnswer===0?'checked':''} onchange="updateQ(${idx}, 'correctAnswer', 0)"> <input type="text" value="${q.options[0]}" onchange="updateOpt(${idx}, 0, this.value)"></div>
-                            <div class="t-mcq-item"><input type="radio" name="q${idx}" ${q.correctAnswer===1?'checked':''} onchange="updateQ(${idx}, 'correctAnswer', 1)"> <input type="text" value="${q.options[1]}" onchange="updateOpt(${idx}, 1, this.value)"></div>
-                            <div class="t-mcq-item"><input type="radio" name="q${idx}" ${q.correctAnswer===2?'checked':''} onchange="updateQ(${idx}, 'correctAnswer', 2)"> <input type="text" value="${q.options[2]}" onchange="updateOpt(${idx}, 2, this.value)"></div>
-                            <div class="t-mcq-item"><input type="radio" name="q${idx}" ${q.correctAnswer===3?'checked':''} onchange="updateQ(${idx}, 'correctAnswer', 3)"> <input type="text" value="${q.options[3]}" onchange="updateOpt(${idx}, 3, this.value)"></div>
+                            <div class="t-mcq-item"><input type="radio" name="q${idx}" ${q.correctAnswer===0?'checked':''} onchange="updateQ(${idx}, 'correctAnswer', 0)"> <input type="text" value="${q.options[0] || ''}" onchange="updateOpt(${idx}, 0, this.value)"></div>
+                            <div class="t-mcq-item"><input type="radio" name="q${idx}" ${q.correctAnswer===1?'checked':''} onchange="updateQ(${idx}, 'correctAnswer', 1)"> <input type="text" value="${q.options[1] || ''}" onchange="updateOpt(${idx}, 1, this.value)"></div>
+                            <div class="t-mcq-item"><input type="radio" name="q${idx}" ${q.correctAnswer===2?'checked':''} onchange="updateQ(${idx}, 'correctAnswer', 2)"> <input type="text" value="${q.options[2] || ''}" onchange="updateOpt(${idx}, 2, this.value)"></div>
+                            <div class="t-mcq-item"><input type="radio" name="q${idx}" ${q.correctAnswer===3?'checked':''} onchange="updateQ(${idx}, 'correctAnswer', 3)"> <input type="text" value="${q.options[3] || ''}" onchange="updateOpt(${idx}, 3, this.value)"></div>
                         </div>
                     `;
                 } else if (q.type === 'identification') {
-                    answerHTML = `<label>Correct Answer:</label><input type="text" value="${q.correctAnswer}" onchange="updateQ(${idx}, 'correctAnswer', this.value)">`;
+                    answerHTML = `<label>Correct Answer (Exact Match Requirement):</label><input type="text" value="${q.correctAnswer}" onchange="updateQ(${idx}, 'correctAnswer', this.value)">`;
                 }
 
                 div.innerHTML = `
@@ -831,11 +920,39 @@
 
                     <div class="mt-10">
                         <label>Hint (Optional):</label>
-                        <input type="text" value="${q.hint}" onchange="updateQ(${idx}, 'hint', this.value)">
+                        <input type="text" value="${q.hint || ''}" onchange="updateQ(${idx}, 'hint', this.value)">
                     </div>
                 `;
                 list.appendChild(div);
             });
+        }
+
+        function loadTeacherVideoPreview() {
+            const currentLesson = globalData.lessons[teacherActiveLessonIndex];
+            
+            tHtml5Player.classList.add('hidden');
+            document.getElementById('t-youtube-player').classList.add('hidden');
+
+            if (currentLesson.videoType === 'local') {
+                if (ytTeacherPlayer) ytTeacherPlayer.stopVideo();
+                tHtml5Player.src = currentLesson.videoSource;
+                tHtml5Player.classList.remove('hidden');
+            } else if (currentLesson.videoType === 'youtube') {
+                tHtml5Player.pause();
+                document.getElementById('t-youtube-player').classList.remove('hidden');
+                if (ytTeacherPlayer && typeof ytTeacherPlayer.loadVideoById === 'function') {
+                    ytTeacherPlayer.loadVideoById(currentLesson.videoSource);
+                } else {
+                    ytTeacherPlayer = new YT.Player('t-youtube-player', { videoId: currentLesson.videoSource, playerVars: {'controls':1} });
+                }
+            }
+        }
+
+        function getTeacherTime() {
+            const currentLesson = globalData.lessons[teacherActiveLessonIndex];
+            if (currentLesson.videoType === 'local') return Math.floor(tHtml5Player.currentTime);
+            if (currentLesson.videoType === 'youtube' && ytTeacherPlayer) return Math.floor(ytTeacherPlayer.getCurrentTime());
+            return 0;
         }
 
         window.grabTime = function(idx) {
@@ -844,37 +961,126 @@
             updateQ(idx, 'timestamp', t);
         }
 
+        // Live Real-time Configuration update hooks
+        window.updateActiveLessonConfig = function(field, value) {
+            globalData.lessons[teacherActiveLessonIndex][field] = value;
+            saveToLocalStorage();
+            if(field === 'title') renderTabsBar(); // Dynamic real-time sync title string mapping 
+        };
+
+        window.updateActiveLessonControl = function(controlField, isChecked) {
+            globalData.lessons[teacherActiveLessonIndex].controls[controlField] = isChecked;
+            saveToLocalStorage();
+        };
+
+        window.updateGlobalConfig = function(field, value) {
+            globalData[field] = value;
+            saveToLocalStorage();
+        };
+
         window.updateQ = function(idx, field, val) {
-            if (field === 'timestamp' || field === 'correctAnswer' || field === 'maxPoints') appData.questions[idx][field] = parseInt(val, 10) || 0;
-            else appData.questions[idx][field] = val;
+            const currentLesson = globalData.lessons[teacherActiveLessonIndex];
+            if (field === 'timestamp' || field === 'correctAnswer' || field === 'maxPoints') currentLesson.questions[idx][field] = parseInt(val, 10) || 0;
+            else currentLesson.questions[idx][field] = val;
             saveToLocalStorage();
         };
 
         window.updateOpt = function(qIdx, optIdx, val) {
-            appData.questions[qIdx].options[optIdx] = val;
+            globalData.lessons[teacherActiveLessonIndex].questions[qIdx].options[optIdx] = val;
             saveToLocalStorage();
-        }
+        };
 
         window.changeQType = function(idx, type) {
-            appData.questions[idx].type = type;
-            if (type === 'mcq') { appData.questions[idx].options = ["A", "B", "C", "D"]; appData.questions[idx].correctAnswer = 0; }
-            else if (type === 'identification') appData.questions[idx].correctAnswer = "Answer";
-            else appData.questions[idx].correctAnswer = "";
+            const currentLesson = globalData.lessons[teacherActiveLessonIndex];
+            currentLesson.questions[idx].type = type;
+            if (type === 'mcq') { currentLesson.questions[idx].options = ["", "", "", ""]; currentLesson.questions[idx].correctAnswer = 0; }
+            else if (type === 'identification') currentLesson.questions[idx].correctAnswer = "";
+            else currentLesson.questions[idx].correctAnswer = "";
             saveToLocalStorage();
             renderTeacherDashboard();
-        }
+        };
 
         window.deleteQ = function(idx) {
-            appData.questions.splice(idx, 1);
+            globalData.lessons[teacherActiveLessonIndex].questions.splice(idx, 1);
             saveToLocalStorage();
             renderTeacherDashboard();
-        }
+        };
 
         document.getElementById('btn-add-question').onclick = () => {
-            appData.questions.unshift({ type: "mcq", timestamp: 0, maxPoints: 10, text: "New Question", options: ["1", "2", "3", "4"], correctAnswer: 0, hint: "" });
+            globalData.lessons[teacherActiveLessonIndex].questions.unshift({ type: "mcq", timestamp: 0, maxPoints: 10, text: "New Question Text", options: ["", "", "", ""], correctAnswer: 0, hint: "" });
             saveToLocalStorage();
             renderTeacherDashboard();
-        }
+        };
+
+        // Lesson Add/Delete Hooks
+        document.getElementById('btn-add-lesson').onclick = () => {
+            const newId = "lesson_" + Date.now();
+            globalData.lessons.push({
+                id: newId,
+                title: "New Custom Lesson Title",
+                videoSource: "dQw4w9WgXcQ",
+                videoType: "youtube",
+                controls: { playPause: true, rewind: true, forward: true },
+                questions: []
+            });
+            saveToLocalStorage();
+            teacherActiveLessonIndex = globalData.lessons.length - 1;
+            renderTabsBar();
+            renderTeacherDashboard();
+            loadTeacherVideoPreview();
+        };
+
+        document.getElementById('btn-delete-lesson').onclick = () => {
+            if(globalData.lessons.length <= 1) {
+                alert("You must keep at least one active assignment configuration!");
+                return;
+            }
+            if(confirm("Are you absolutely sure you want to permanently delete this entire lesson and all its associated questions?")) {
+                globalData.lessons.splice(teacherActiveLessonIndex, 1);
+                teacherActiveLessonIndex = 0;
+                saveToLocalStorage();
+                renderTabsBar();
+                renderTeacherDashboard();
+                loadTeacherVideoPreview();
+            }
+        };
+
+        document.getElementById('btn-exit-teacher').onclick = () => {
+            if(ytTeacherPlayer) ytTeacherPlayer.stopVideo();
+            tHtml5Player.pause();
+
+            document.getElementById('teacher-view').classList.add('hidden');
+            document.getElementById('home-view').classList.remove('hidden');
+            
+            document.getElementById('home-total-score').textContent = cumulativeScore;
+            renderHomepage();
+        };
+
+        // JSON BACKUP STORAGE EXPORT / IMPORT LOGIC
+        document.getElementById('btn-export-json').addEventListener('click', () => {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(globalData, null, 2));
+            const dl = document.getElementById('download-anchor');
+            dl.setAttribute("href", dataStr); dl.setAttribute("download", "multi-lesson-system-backup.json"); dl.click();
+        });
+
+        document.getElementById('import-json').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    globalData = JSON.parse(e.target.result);
+                    sanitizeData();
+                    saveToLocalStorage();
+                    alert("System configuration backup parsed and imported successfully!");
+                    teacherActiveLessonIndex = 0;
+                    renderTabsBar();
+                    renderTeacherDashboard();
+                    loadTeacherVideoPreview();
+                } catch(err) { alert("Invalid backup profile document configuration format."); }
+            };
+            reader.readAsText(file);
+        });
     </script>
 </body>
 </html>
