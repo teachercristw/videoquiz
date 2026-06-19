@@ -8,5 +8,34 @@
     "rewind": true,
     "forward": true
   },
-  "webhookUrl": "https://script.google.com/macros/s/AKfycbwl0tvckL5jgitzIJts3RonQpPN15oPyAvQtClYOwJQvmJAlkeS0hU5otrPtRnuywqfvQ/exec"
+  "webhookUrl": "https://script.google.com/macros/s/AKfycbwl0tvckL5jgitzIJts3RonQpPN15oPyAvQtClYOwJQvmJAlkeS0hU5otrPtRnuywqfvQ/exec",
+  "lessons": [
+    {
+      "id": "lesson_1",
+      "title": "The Colour Monster",
+      "videoSource": "BU5RoqHEYZ4",
+      "videoType": "youtube",
+      "controls": {
+        "playPause": true,
+        "rewind": true,
+        "forward": true
+      },
+      "questions": [
+        {
+          "type": "mcq",
+          "timestamp": 5,
+          "maxPoints": 10,
+          "text": "What color is the sky?",
+          "options": [
+            "Green",
+            "Blue",
+            "Red",
+            "Yellow"
+          ],
+          "correctAnswer": 1,
+          "hint": "Look up on a bright day!"
+        }
+      ]
+    }
+  ]
 }
