@@ -9,8 +9,8 @@
     <style>
         /* Base Variables - Sophisticated & Creative Dark Theme */
         :root {
-            --bg-color: #020617;        /* Ultra deep slate/black */
-            --card-bg: rgba(30, 41, 59, 0.7); /* Semi-transparent for glass effect */
+            --bg-color: #020617;        
+            --card-bg: rgba(30, 41, 59, 0.7); 
             --text-main: #f8fafc;       
             --text-muted: #94a3b8;      
             --border-color: rgba(51, 65, 85, 0.8); 
@@ -52,9 +52,7 @@
         .container { flex: 1; width: 100%; max-width: 1000px; margin: 0 auto; padding: 20px; }
         .teacher-container { flex: 1; width: 100%; max-width: 1200px; margin: 0 auto; padding: 20px; }
 
-        /* ================================ */
-        /* SPLASH SCREEN (Main Page)        */
-        /* ================================ */
+        /* Splash Screen */
         #splash-view {
             position: fixed; inset: 0; display: flex; flex-direction: column;
             align-items: center; justify-content: center; z-index: 2000;
@@ -79,9 +77,7 @@
         .btn-enter:disabled { background: #475569; cursor: not-allowed; animation: none; box-shadow: none; opacity: 0.7; }
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(59, 130, 246, 0); } 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); } }
 
-        /* ================================ */
-        /* HOMEPAGE DESIGN                  */
-        /* ================================ */
+        /* Homepage Design */
         .welcome-hero {
             background: linear-gradient(135deg, rgba(30, 27, 75, 0.8) 0%, rgba(30, 41, 59, 0.8) 100%);
             backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
@@ -143,6 +139,7 @@
         }
         .btn:active { transform: translateY(4px); box-shadow: none; }
         .btn:hover { filter: brightness(1.1); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
         
         .btn-play { background-color: var(--btn-play); }
         .btn-pause { background-color: var(--btn-pause); }
@@ -238,7 +235,6 @@
         }
         .site-footer span { font-weight: 800; color: #818cf8; letter-spacing: 0.5px; }
 
-        /* Media Queries for Devices */
         @media (max-width: 900px) { 
             .teacher-layout { grid-template-columns: 1fr; } 
             .sticky-panel { position: relative; top: 0; }
@@ -257,18 +253,12 @@
 </head>
 <body>
 
-    <!-- ========================================== -->
-    <!-- SPLASH SCREEN (MAIN ENTRY)                 -->
-    <!-- ========================================== -->
     <div id="splash-view">
         <h1 class="splash-title">Interactive Video Quiz</h1>
         <p class="splash-subtitle">Engage, learn, and test your knowledge with interactive video lessons.</p>
         <button id="btn-enter" class="btn-enter" disabled>Connecting...</button>
     </div>
 
-    <!-- ========================================== -->
-    <!-- HOMEPAGE (LESSON SELECTION)                -->
-    <!-- ========================================== -->
     <main id="home-view" class="container hidden">
         <div class="welcome-hero">
             <h1>Welcome to the Learning Hub</h1>
@@ -282,14 +272,9 @@
             </div>
         </div>
 
-        <div id="lesson-cards-container" class="lesson-grid">
-            <!-- Populated via Javascript -->
-        </div>
+        <div id="lesson-cards-container" class="lesson-grid"></div>
     </main>
 
-    <!-- ========================================== -->
-    <!-- STUDENT ACTIVITY VIEW                      -->
-    <!-- ========================================== -->
     <main id="student-view" class="container hidden">
         <header class="app-header">
             <div style="display: flex; align-items: center; gap: 15px;">
@@ -309,22 +294,21 @@
 
         <div id="student-controls" class="controls">
             <div id="group-rewind" class="control-group hidden">
-                <button class="btn btn-rw micro" onclick="skipTime(-10)">⏪ -10s</button>
-                <button class="btn btn-rw micro" onclick="skipTime(-5)">⏪ -5s</button>
+                <button class="btn btn-rw micro ctrl-btn" onclick="skipTime(-10)">⏪ -10s</button>
+                <button class="btn btn-rw micro ctrl-btn" onclick="skipTime(-5)">⏪ -5s</button>
             </div>
             
             <div id="group-playpause" class="control-group hidden" style="background: transparent; border: none; padding: 0;">
-                <button id="btn-play" class="btn btn-play">▶️ Play</button>
-                <button id="btn-pause" class="btn btn-pause">⏸️ Pause</button>
+                <button id="btn-play" class="btn btn-play ctrl-btn">▶️ Play</button>
+                <button id="btn-pause" class="btn btn-pause ctrl-btn">⏸️ Pause</button>
             </div>
 
             <div id="group-forward" class="control-group hidden">
-                <button class="btn btn-fw micro" onclick="skipTime(5)">+5s ⏩</button>
-                <button class="btn btn-fw micro" onclick="skipTime(10)">+10s ⏩</button>
+                <button class="btn btn-fw micro ctrl-btn" onclick="skipTime(5)">+5s ⏩</button>
+                <button class="btn btn-fw micro ctrl-btn" onclick="skipTime(10)">+10s ⏩</button>
             </div>
         </div>
 
-        <!-- Quiz Area -->
         <div id="quiz-area" class="quiz-panel hidden">
             <h2 id="quiz-question">Question?</h2>
             <span class="points-indicator">⏱️ Answer quickly for more points! (Max: <span id="quiz-max-points">10</span> Pts)</span>
@@ -337,7 +321,6 @@
         </div>
     </main>
 
-    <!-- Save Data Modal -->
     <div id="save-modal" class="modal-overlay hidden">
         <div class="modal-content">
             <h2 style="color:#fff;">🎉 Lesson Complete!</h2>
@@ -359,7 +342,6 @@
         </div>
     </div>
 
-    <!-- Teacher Login Modal -->
     <div id="pin-modal" class="modal-overlay hidden">
         <div class="modal-content">
             <h2 style="color:#fff;">Teacher Dashboard</h2>
@@ -372,16 +354,12 @@
         </div>
     </div>
 
-    <!-- Footer -->
     <footer class="site-footer" id="main-footer">
         Developed by <span>Teacher Cris Saranza</span>
     </footer>
 
     <button id="btn-teacher-login" class="gear-icon">⚙️</button>
 
-    <!-- ========================================== -->
-    <!-- TEACHER DASHBOARD                          -->
-    <!-- ========================================== -->
     <div id="teacher-view" class="teacher-container hidden">
         <header class="app-header">
             <h1>⚙️ Teacher Workspace</h1>
@@ -391,14 +369,9 @@
             </div>
         </header>
 
-        <!-- Lesson Selectors (Tabs) -->
-        <div id="dashboard-tabs-bar" class="dashboard-tabs">
-            <!-- Populated via Javascript -->
-        </div>
+        <div id="dashboard-tabs-bar" class="dashboard-tabs"></div>
 
         <div class="teacher-layout">
-            
-            <!-- LEFT PANEL (Sticky Video & Settings) -->
             <div class="sticky-panel">
                 <div class="teacher-panel">
                     <div class="flex-between" style="align-items: flex-start; margin-bottom: 10px;">
@@ -425,7 +398,6 @@
 
                 <div class="teacher-panel">
                     <h3 style="color:#fff;">2. Controls & Data</h3>
-                    
                     <div class="toggle-switch">
                         <label style="margin:0;">Allow Play & Pause</label>
                         <input type="checkbox" id="t-ctrl-play" onchange="updateActiveLessonControl('playPause', this.checked)">
@@ -447,9 +419,7 @@
                     <h3 style="color:#fff;">3. Backup & Security</h3>
                     <label>Dashboard PIN:</label>
                     <input type="text" id="t-pin" oninput="updateGlobalConfig('pin', this.value)">
-                    
                     <hr style="margin: 20px 0; border: 0; border-top: 1px dashed var(--border-color);">
-
                     <label>System JSON File:</label>
                     <div class="flex-between mt-10" style="gap:10px;">
                         <button id="btn-export-json" class="btn btn-action small" style="flex:1;">📥 Export</button>
@@ -460,7 +430,6 @@
                 </div>
             </div>
 
-            <!-- RIGHT PANEL (Questions List) -->
             <div class="teacher-panel" style="background: transparent; border: none; padding: 0; box-shadow: none;">
                 <div class="flex-between" style="background: var(--card-bg); backdrop-filter: blur(10px); padding: 20px; border-radius: 16px; border: 1px solid var(--border-color); margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
                     <h3 style="color:#fff;">4. Questions Manager</h3>
@@ -468,16 +437,12 @@
                 </div>
                 
                 <div id="questions-list">
-                    <!-- Populated by JS -->
-                </div>
+                    </div>
             </div>
 
         </div>
     </div>
 
-    <!-- ========================================== -->
-    <!-- JAVASCRIPT LOGIC                           -->
-    <!-- ========================================== -->
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
         const DEFAULT_GLOBAL_DATA = {
@@ -502,7 +467,7 @@
                 l.questions.forEach(q => { 
                     q.timestamp = Number(q.timestamp) || 0;
                     q.maxPoints = Number(q.maxPoints) || 10;
-                    q.correctAnswer = (q.type === 'mcq') ? Number(q.correctAnswer) : q.correctAnswer;
+                    q.correctAnswer = (q.type === 'mcq') ? Number(q.correctAnswer) : (q.correctAnswer || "");
                 });
             });
         }
@@ -524,9 +489,7 @@
         const html5Player = document.getElementById('html5-player');
         const tHtml5Player = document.getElementById('t-html5-player');
 
-        // ==========================================
-        // SPLASH SCREEN & GITHUB INITIALIZATION
-        // ==========================================
+        // SPLASH SCREEN SYNC
         window.onload = async () => {
             const githubRawUrl = "https://raw.githubusercontent.com/teachercristw/videoquiz/refs/heads/main/video.json";
             const btnEnter = document.getElementById('btn-enter');
@@ -536,19 +499,12 @@
                 if (!response.ok) throw new Error("Network error");
                 const fetchedData = await response.json();
                 globalData = fetchedData;
-                sanitizeData();
-                saveToLocalStorage();
-                console.log("Synced from GitHub!");
-            } catch (error) {
-                console.warn("Using offline saved data.");
-            }
+                sanitizeData(); saveToLocalStorage();
+            } catch (error) { console.warn("Using offline saved data."); }
 
             document.getElementById('home-total-score').textContent = cumulativeScore;
             renderHomepage();
-            
-            // Enable enter button after load
-            btnEnter.textContent = "Enter Hub";
-            btnEnter.removeAttribute("disabled");
+            btnEnter.textContent = "Enter Hub"; btnEnter.removeAttribute("disabled");
         };
 
         document.getElementById('btn-enter').onclick = () => {
@@ -556,9 +512,7 @@
             document.getElementById('home-view').classList.remove('hidden');
         };
 
-        // ==========================================
-        // HOMEPAGE VIEW RENDERING
-        // ==========================================
+        // HOMEPAGE RENDERING
         function renderHomepage() {
             const container = document.getElementById('lesson-cards-container');
             container.innerHTML = '';
@@ -587,16 +541,13 @@
             document.getElementById('home-view').classList.add('hidden');
             document.getElementById('student-view').classList.remove('hidden');
             document.getElementById('app-title').textContent = lesson.title || "Video Lesson";
-            currentScore = 0;
-            document.getElementById('score-display').textContent = currentScore;
+            currentScore = 0; document.getElementById('score-display').textContent = currentScore;
             initVideoPlayer();
         }
 
         document.getElementById('btn-back-home').onclick = () => {
             clearInterval(timeCheckerInterval);
-            if(ytPlayer) ytPlayer.stopVideo();
-            html5Player.pause();
-            
+            if(ytPlayer) ytPlayer.stopVideo(); html5Player.pause();
             document.getElementById('student-view').classList.add('hidden');
             document.getElementById('quiz-area').classList.add('hidden');
             document.getElementById('home-view').classList.remove('hidden');
@@ -614,26 +565,21 @@
         function onYouTubeIframeAPIReady() { isYtApiReady = true; }
 
         function initVideoPlayer() {
-            clearInterval(timeCheckerInterval);
-            answeredQuestions.clear();
+            clearInterval(timeCheckerInterval); answeredQuestions.clear();
             document.getElementById('quiz-area').classList.add('hidden');
             document.getElementById('btn-finish').classList.add('hidden');
-            html5Player.classList.add('hidden');
-            document.getElementById('youtube-player').classList.add('hidden');
+            html5Player.classList.add('hidden'); document.getElementById('youtube-player').classList.add('hidden');
+            activeQuestionIndex = -1; setVideoControlsDisabled(false);
 
             applyStudentControlsUI();
 
             if (currentActiveLesson.videoType === 'local') {
                 if (ytPlayer) ytPlayer.stopVideo();
-                html5Player.src = currentActiveLesson.videoSource;
-                html5Player.classList.remove('hidden');
+                html5Player.src = currentActiveLesson.videoSource; html5Player.classList.remove('hidden');
             } else if (currentActiveLesson.videoType === 'youtube') {
-                html5Player.pause();
-                document.getElementById('youtube-player').classList.remove('hidden');
-
-                if (ytPlayer && typeof ytPlayer.loadVideoById === 'function') {
-                    ytPlayer.loadVideoById(currentActiveLesson.videoSource);
-                } else {
+                html5Player.pause(); document.getElementById('youtube-player').classList.remove('hidden');
+                if (ytPlayer && typeof ytPlayer.loadVideoById === 'function') { ytPlayer.loadVideoById(currentActiveLesson.videoSource); } 
+                else {
                     ytPlayer = new YT.Player('youtube-player', {
                         videoId: currentActiveLesson.videoSource,
                         playerVars: { 'controls': 0, 'rel': 0, 'playsinline': 1, 'disablekb': 1 },
@@ -645,10 +591,24 @@
         }
 
         function getCurrentTime() { return currentActiveLesson.videoType === 'local' ? html5Player.currentTime : (ytPlayer?.getCurrentTime() || 0); }
-        function playVideo() { currentActiveLesson.videoType === 'local' ? html5Player.play() : ytPlayer?.playVideo(); }
-        function pauseVideo() { currentActiveLesson.videoType === 'local' ? html5Player.pause() : ytPlayer?.pauseVideo(); }
+        
+        // --- VIDEO LOCK FIXES ---
+        function setVideoControlsDisabled(disabled) {
+            const btns = document.querySelectorAll('.ctrl-btn');
+            btns.forEach(btn => btn.disabled = disabled);
+            if(currentActiveLesson.videoType === 'local') html5Player.controls = !disabled && currentActiveLesson.controls.playPause;
+        }
+
+        function playVideo() { 
+            if (activeQuestionIndex !== -1) return; // BLOCKED: Cannot play while question is active
+            currentActiveLesson.videoType === 'local' ? html5Player.play() : ytPlayer?.playVideo(); 
+        }
+        function pauseVideo() { 
+            currentActiveLesson.videoType === 'local' ? html5Player.pause() : ytPlayer?.pauseVideo(); 
+        }
 
         window.skipTime = function(seconds) {
+            if (activeQuestionIndex !== -1) return; // BLOCKED: Cannot seek while question is active
             const currentTime = getCurrentTime();
             let newTime = currentTime + seconds;
 
@@ -668,15 +628,17 @@
         document.getElementById('btn-play').addEventListener('click', playVideo);
         document.getElementById('btn-pause').addEventListener('click', pauseVideo);
 
-        // Quiz Logic
+        // --- QUIZ LOGIC ---
         function checkVideoTime() {
+            if (activeQuestionIndex !== -1) return; // Skip checking if a question is already up
+            
             const currentTime = getCurrentTime();
             let passedQuestions = currentActiveLesson.questions
                 .map((q, index) => ({ ...q, originalIndex: index }))
                 .filter(q => currentTime >= q.timestamp && !answeredQuestions.has(q.originalIndex))
                 .sort((a, b) => a.timestamp - b.timestamp);
 
-            if (passedQuestions.length > 0 && activeQuestionIndex === -1) {
+            if (passedQuestions.length > 0) {
                 triggerQuiz(passedQuestions[0], passedQuestions[0].originalIndex);
             }
         }
@@ -685,6 +647,7 @@
             pauseVideo(); 
             activeQuestionIndex = index;
             questionAppearedTime = Date.now(); 
+            setVideoControlsDisabled(true); // Lock the video controls!
             
             const area = document.getElementById('quiz-area');
             area.classList.remove('hidden');
@@ -708,8 +671,7 @@
                 grid.className = 'mcq-grid';
                 q.options.forEach((opt, idx) => {
                     const btn = document.createElement('button');
-                    btn.className = 'option-btn';
-                    btn.textContent = opt;
+                    btn.className = 'option-btn'; btn.textContent = opt;
                     btn.onclick = () => checkAnswer(idx, btn, q.correctAnswer);
                     grid.appendChild(btn);
                 });
@@ -718,6 +680,7 @@
                 answerArea.innerHTML = `
                     <input type="text" id="student-text-input" class="text-answer-input" placeholder="Type your answer here...">
                     <button class="btn btn-action" onclick="checkTextAnswer(this)">Submit Answer</button>
+                    <p id="empty-warning" class="hidden mt-10" style="color: var(--btn-danger); font-weight: bold;">Please type an answer first!</p>
                 `;
             }
         }
@@ -739,13 +702,34 @@
             else handleWrong(btnClicked, grid.children[correctIndex]);
         }
 
-        function checkTextAnswer(btnElement) {
-            const ans = document.getElementById('student-text-input').value.trim();
+        // --- SUBMIT TEXT ANSWER FIX ---
+        window.checkTextAnswer = function(btnElement) {
+            const inputField = document.getElementById('student-text-input');
+            const warning = document.getElementById('empty-warning');
+            const ans = inputField.value.trim();
+            
+            if (!ans) { 
+                warning.classList.remove('hidden'); // Block empty submissions
+                return; 
+            }
+            warning.classList.add('hidden');
+            btnElement.disabled = true;
+            inputField.disabled = true;
+
             const q = currentActiveLesson.questions[activeQuestionIndex];
-            if (q.type === 'essay' && ans.length > 0) handleCorrect(null);
-            else if (q.type === 'identification' && ans.toLowerCase() === q.correctAnswer.toLowerCase()) handleCorrect(null);
+            let isCorrect = false;
+
+            if (q.type === 'essay') {
+                isCorrect = true; // Automatically award points for any essay text
+            } else if (q.type === 'identification') {
+                // Safely convert everything to lowercase to check strings properly
+                const correctStr = (q.correctAnswer || '').toString().toLowerCase().trim();
+                if (ans.toLowerCase() === correctStr) isCorrect = true;
+            }
+
+            if (isCorrect) handleCorrect(null);
             else handleWrong(null, null);
-        }
+        };
 
         function handleCorrect(btnClicked) {
             if(btnClicked) btnClicked.classList.add('correct');
@@ -755,8 +739,7 @@
             
             const fb = document.getElementById('quiz-feedback');
             fb.textContent = `✨ Correct! You earned +${earnedPoints} Points! ✨`;
-            fb.style.color = "var(--btn-play)";
-            fb.classList.remove('hidden');
+            fb.style.color = "var(--btn-play)"; fb.classList.remove('hidden');
             setTimeout(closeQuiz, 2000);
         }
 
@@ -764,29 +747,27 @@
             if(btnClicked) btnClicked.classList.add('wrong');
             const fb = document.getElementById('quiz-feedback');
             fb.textContent = "Oops! Incorrect. 0 Points.";
-            fb.style.color = "var(--btn-danger)";
-            fb.classList.remove('hidden');
+            fb.style.color = "var(--btn-danger)"; fb.classList.remove('hidden');
             if(correctBtn) correctBtn.classList.add('correct'); 
             setTimeout(closeQuiz, 2500);
         }
 
         function closeQuiz() {
             answeredQuestions.add(activeQuestionIndex);
-            activeQuestionIndex = -1;
+            activeQuestionIndex = -1; // Unblocks the video!
             document.getElementById('quiz-area').classList.add('hidden');
+            setVideoControlsDisabled(false); // Restore controls
             
             if (answeredQuestions.size === currentActiveLesson.questions.length && currentActiveLesson.questions.length > 0) {
                 document.getElementById('btn-finish').classList.remove('hidden');
             }
-            playVideo();
+            playVideo(); // Auto resume
         }
 
-        // Save & Finish
+        // --- SAVE SYSTEM ---
         document.getElementById('btn-finish').onclick = () => {
-            pauseVideo();
-            document.getElementById('final-score-display').textContent = currentScore;
-            document.getElementById('save-modal').classList.remove('hidden');
-            document.getElementById('save-status').classList.add('hidden');
+            pauseVideo(); document.getElementById('final-score-display').textContent = currentScore;
+            document.getElementById('save-modal').classList.remove('hidden'); document.getElementById('save-status').classList.add('hidden');
         };
 
         document.getElementById('btn-cancel-save').onclick = () => document.getElementById('save-modal').classList.add('hidden');
@@ -797,15 +778,11 @@
             const statusLabel = document.getElementById('save-status');
             
             if(!sName || !sClass) {
-                statusLabel.textContent = "Please enter Name and Class!";
-                statusLabel.style.color = "var(--btn-danger)";
+                statusLabel.textContent = "Please enter Name and Class!"; statusLabel.style.color = "var(--btn-danger)";
                 statusLabel.classList.remove('hidden'); return;
             }
 
-            statusLabel.style.color = "var(--accent-glow)";
-            statusLabel.textContent = "Saving to Server...";
-            statusLabel.classList.remove('hidden');
-
+            statusLabel.style.color = "var(--accent-glow)"; statusLabel.textContent = "Saving to Server..."; statusLabel.classList.remove('hidden');
             cumulativeScore += currentScore;
             const payload = { lessonId: currentActiveLesson.id, lessonTitle: currentActiveLesson.title, name: sName, className: sClass, score: currentScore, date: new Date().toLocaleString() };
             saveToLocalStorage();
@@ -813,8 +790,7 @@
             if (globalData.webhookUrl) {
                 try {
                     await fetch(globalData.webhookUrl, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                    statusLabel.textContent = "✅ Successfully Saved!";
-                    statusLabel.style.color = "var(--btn-play)";
+                    statusLabel.textContent = "✅ Successfully Saved!"; statusLabel.style.color = "var(--btn-play)";
                     setTimeout(() => { document.getElementById('save-modal').classList.add('hidden'); document.getElementById('btn-back-home').click(); }, 2000);
                     return;
                 } catch(e) {}
@@ -825,29 +801,20 @@
             const dl = document.getElementById('download-anchor');
             dl.setAttribute("href", dataStr); dl.setAttribute("download", `${payload.name}_${payload.lessonId}_Report.txt`); dl.click();
 
-            statusLabel.textContent = "✅ Report Downloaded!";
-            statusLabel.style.color = "var(--btn-play)";
+            statusLabel.textContent = "✅ Report Downloaded!"; statusLabel.style.color = "var(--btn-play)";
             setTimeout(() => { document.getElementById('save-modal').classList.add('hidden'); document.getElementById('btn-back-home').click(); }, 3000);
         };
 
-        // ==========================================
-        // TEACHER WORKSPACE INTERFACE LOGIC
-        // ==========================================
-        document.getElementById('btn-teacher-login').onclick = () => {
-            pauseVideo(); document.getElementById('pin-modal').classList.remove('hidden');
-        };
+        // --- TEACHER WORKSPACE ---
+        document.getElementById('btn-teacher-login').onclick = () => { pauseVideo(); document.getElementById('pin-modal').classList.remove('hidden'); };
         document.getElementById('btn-cancel-pin').onclick = () => document.getElementById('pin-modal').classList.add('hidden');
         
         document.getElementById('btn-submit-pin').onclick = () => {
             if (document.getElementById('pin-input').value === globalData.pin) {
-                document.getElementById('pin-modal').classList.add('hidden');
-                document.getElementById('home-view').classList.add('hidden');
-                document.getElementById('splash-view').classList.add('hidden');
-                document.getElementById('main-footer').classList.add('hidden');
-                document.getElementById('student-view').classList.add('hidden');
-                document.getElementById('teacher-view').classList.remove('hidden');
-                document.getElementById('pin-input').value = '';
-                teacherActiveLessonIndex = 0;
+                document.getElementById('pin-modal').classList.add('hidden'); document.getElementById('home-view').classList.add('hidden');
+                document.getElementById('splash-view').classList.add('hidden'); document.getElementById('main-footer').classList.add('hidden');
+                document.getElementById('student-view').classList.add('hidden'); document.getElementById('teacher-view').classList.remove('hidden');
+                document.getElementById('pin-input').value = ''; teacherActiveLessonIndex = 0;
                 renderTabsBar(); renderTeacherDashboard(); loadTeacherVideoPreview();
             } else { document.getElementById('pin-error').classList.remove('hidden'); }
         };
@@ -859,24 +826,20 @@
                 const btn = document.createElement('button');
                 btn.className = `tab-btn ${index === teacherActiveLessonIndex ? 'active' : ''}`;
                 btn.textContent = lesson.title || `Lesson ${index + 1}`;
-                btn.onclick = () => {
-                    teacherActiveLessonIndex = index;
-                    renderTabsBar(); renderTeacherDashboard(); loadTeacherVideoPreview();
-                };
+                btn.onclick = () => { teacherActiveLessonIndex = index; renderTabsBar(); renderTeacherDashboard(); loadTeacherVideoPreview(); };
                 tabsBar.appendChild(btn);
             });
         }
 
+        // --- DESCENDING ORDER FIX IN RENDER ---
         function renderTeacherDashboard() {
             const currentLesson = globalData.lessons[teacherActiveLessonIndex];
             
             document.getElementById('t-pin').value = globalData.pin || "";
             document.getElementById('t-webhook').value = globalData.webhookUrl || "";
-            
             document.getElementById('t-lesson-title').value = currentLesson.title || "";
             document.getElementById('t-video-type').value = currentLesson.videoType || "youtube";
             document.getElementById('t-video-source').value = currentLesson.videoSource || "";
-
             document.getElementById('t-ctrl-play').checked = currentLesson.controls.playPause;
             document.getElementById('t-ctrl-rewind').checked = currentLesson.controls.rewind;
             document.getElementById('t-ctrl-forward').checked = currentLesson.controls.forward;
@@ -884,7 +847,9 @@
             const list = document.getElementById('questions-list');
             list.innerHTML = '';
 
-            currentLesson.questions.forEach((q, idx) => {
+            // Iterate backward through the array to render newest (highest index) FIRST visually.
+            for (let idx = currentLesson.questions.length - 1; idx >= 0; idx--) {
+                const q = currentLesson.questions[idx];
                 const div = document.createElement('div');
                 div.className = 'q-box';
                 
@@ -900,7 +865,7 @@
                         </div>
                     `;
                 } else if (q.type === 'identification') {
-                    answerHTML = `<label>Correct Answer (Exact Match):</label><input type="text" value="${q.correctAnswer}" onchange="updateQ(${idx}, 'correctAnswer', this.value)">`;
+                    answerHTML = `<label>Correct Answer (Exact Match):</label><input type="text" value="${q.correctAnswer || ''}" onchange="updateQ(${idx}, 'correctAnswer', this.value)">`;
                 }
 
                 div.innerHTML = `
@@ -938,7 +903,7 @@
                     </div>
                 `;
                 list.appendChild(div);
-            });
+            }
         }
 
         function loadTeacherVideoPreview() {
@@ -962,21 +927,15 @@
             return 0;
         }
 
-        window.grabTime = function(idx) {
-            const t = getTeacherTime(); document.getElementById(`ts-${idx}`).value = t; updateQ(idx, 'timestamp', t);
-        }
-
-        window.updateActiveLessonConfig = function(field, value) {
-            globalData.lessons[teacherActiveLessonIndex][field] = value; saveToLocalStorage();
-            if(field === 'title') renderTabsBar(); 
-        };
-
+        window.grabTime = function(idx) { const t = getTeacherTime(); document.getElementById(`ts-${idx}`).value = t; updateQ(idx, 'timestamp', t); }
+        window.updateActiveLessonConfig = function(field, value) { globalData.lessons[teacherActiveLessonIndex][field] = value; saveToLocalStorage(); if(field === 'title') renderTabsBar(); };
         window.updateActiveLessonControl = function(controlField, isChecked) { globalData.lessons[teacherActiveLessonIndex].controls[controlField] = isChecked; saveToLocalStorage(); };
         window.updateGlobalConfig = function(field, value) { globalData[field] = value; saveToLocalStorage(); };
 
         window.updateQ = function(idx, field, val) {
             const currentLesson = globalData.lessons[teacherActiveLessonIndex];
-            if (field === 'timestamp' || field === 'correctAnswer' || field === 'maxPoints') currentLesson.questions[idx][field] = parseInt(val, 10) || 0;
+            if (field === 'timestamp' || field === 'maxPoints') currentLesson.questions[idx][field] = parseInt(val, 10) || 0;
+            else if (field === 'correctAnswer' && currentLesson.questions[idx].type === 'mcq') currentLesson.questions[idx][field] = parseInt(val, 10) || 0;
             else currentLesson.questions[idx][field] = val;
             saveToLocalStorage();
         };
@@ -993,17 +952,12 @@
 
         window.deleteQ = function(idx) { globalData.lessons[teacherActiveLessonIndex].questions.splice(idx, 1); saveToLocalStorage(); renderTeacherDashboard(); };
 
-        // ADD QUESTION FIX: Changed push() so questions append to the bottom logically.
+        // ADD NEW QUESTION FIX: Since the list renders backward, pushing it drops it visually at the top.
         document.getElementById('btn-add-question').onclick = () => {
             globalData.lessons[teacherActiveLessonIndex].questions.push({ type: "mcq", timestamp: 0, maxPoints: 10, text: "New Question Text", options: ["", "", "", ""], correctAnswer: 0, hint: "" });
             saveToLocalStorage(); renderTeacherDashboard();
-            
-            // Scroll to the bottom to see the new question
-            setTimeout(() => {
-                const list = document.getElementById('questions-list');
-                list.scrollTop = list.scrollHeight;
-                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-            }, 100);
+            // Scroll back up gently so the teacher sees the new top item!
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         };
 
         document.getElementById('btn-add-lesson').onclick = () => {
