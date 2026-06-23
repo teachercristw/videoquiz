@@ -1,6 +1,6 @@
 {
   "pin": "1037440",
-  "webhookUrl": "https://script.google.com/macros/s/AKfycbwl0tvckL5jgitzIJts3RonQpPN15oPyAvQtClYOwJQvmJAlkeS0hU5otrPtRnuywqfvQ/exec",
+  "webhookUrl": "",
   "lessons": [
     {
       "id": "lesson_1",
@@ -12,7 +12,7 @@
       "controls": {
         "playPause": true,
         "rewind": true,
-        "forward": true
+        "forward": false
       },
       "questions": [
         {
@@ -20,9 +20,9 @@
           "timestamp": 24,
           "timer": 30,
           "maxPoints": 10,
-          "minPoints": 1,
+          "minPoints": 2,
           "hasTimer": true,
-          "text": "\"Where is the Colour Monster going today?",
+          "text": "Where is the Colour Monster going today?",
           "options": [
             "",
             "",
@@ -35,7 +35,7 @@
         {
           "type": "mcq",
           "timestamp": 44,
-          "timer": 20,
+          "timer": 30,
           "maxPoints": 10,
           "minPoints": 1,
           "hasTimer": true,
@@ -52,7 +52,7 @@
         {
           "type": "mcq",
           "timestamp": 65,
-          "timer": 20,
+          "timer": 30,
           "maxPoints": 10,
           "minPoints": 1,
           "hasTimer": true,
@@ -69,9 +69,9 @@
         {
           "type": "identification",
           "timestamp": 73,
-          "timer": 30,
+          "timer": 65,
           "maxPoints": 10,
-          "minPoints": 1,
+          "minPoints": 2,
           "hasTimer": true,
           "text": "The boy says the monster only needs a coat and a _____.",
           "options": [
@@ -86,7 +86,7 @@
         {
           "type": "mcq",
           "timestamp": 93,
-          "timer": 20,
+          "timer": 30,
           "maxPoints": 10,
           "minPoints": 1,
           "hasTimer": true,
@@ -103,7 +103,7 @@
         {
           "type": "mcq",
           "timestamp": 126,
-          "timer": 20,
+          "timer": 30,
           "maxPoints": 10,
           "minPoints": 1,
           "hasTimer": true,
@@ -120,7 +120,7 @@
         {
           "type": "mcq",
           "timestamp": 140,
-          "timer": 20,
+          "timer": 30,
           "maxPoints": 10,
           "minPoints": 1,
           "hasTimer": true,
@@ -137,7 +137,7 @@
         {
           "type": "mcq",
           "timestamp": 152,
-          "timer": 20,
+          "timer": 30,
           "maxPoints": 10,
           "minPoints": 1,
           "hasTimer": true,
@@ -154,9 +154,9 @@
         {
           "type": "identification",
           "timestamp": 164,
-          "timer": 30,
+          "timer": 60,
           "maxPoints": 10,
-          "minPoints": 1,
+          "minPoints": 2,
           "hasTimer": true,
           "text": "At the playground, the kids want a turn on the _____.",
           "options": [
@@ -171,7 +171,7 @@
         {
           "type": "mcq",
           "timestamp": 179,
-          "timer": 20,
+          "timer": 30,
           "maxPoints": 10,
           "minPoints": 1,
           "hasTimer": true,
@@ -182,13 +182,13 @@
             "Face",
             "Hair"
           ],
-          "correctAnswer": 0,
+          "correctAnswer": 1,
           "hint": ""
         },
         {
           "type": "mcq",
           "timestamp": 200,
-          "timer": 20,
+          "timer": 30,
           "maxPoints": 10,
           "minPoints": 1,
           "hasTimer": true,
@@ -205,9 +205,9 @@
         {
           "type": "identification",
           "timestamp": 214,
-          "timer": 40,
+          "timer": 70,
           "maxPoints": 10,
-          "minPoints": 1,
+          "minPoints": 3,
           "hasTimer": true,
           "text": "In the gym, the kids have fun jumping on the _____.",
           "options": [
@@ -222,7 +222,7 @@
         {
           "type": "mcq",
           "timestamp": 230,
-          "timer": 20,
+          "timer": 30,
           "maxPoints": 10,
           "minPoints": 1,
           "hasTimer": true,
@@ -239,9 +239,9 @@
         {
           "type": "identification",
           "timestamp": 255,
-          "timer": 30,
+          "timer": 60,
           "maxPoints": 10,
-          "minPoints": 1,
+          "minPoints": 2,
           "hasTimer": true,
           "text": "After school, the child is very tired and needs to take a _____.",
           "options": [
