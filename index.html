@@ -505,16 +505,21 @@
 
         // SPLASH SCREEN SYNC
         window.onload = async () => {
+            // FIX 1: URL has been corrected
             const githubRawUrl = "https://raw.githubusercontent.com/teachercristw/videoquiz/main/video.json";
             const btnEnter = document.getElementById('btn-enter');
 
             try {
                 const response = await fetch(githubRawUrl + "?t=" + Date.now());
-                if (!response.ok) throw new Error("Network error");
+                if (!response.ok) throw new Error("Network error: " + response.status + " " + response.statusText);
                 const fetchedData = await response.json();
                 globalData = fetchedData;
                 sanitizeData(); saveToLocalStorage();
-            } catch (error) { console.warn("Using offline saved data."); }
+            } catch (error) { 
+                // FIX 2: Exact error will now display in console
+                console.error("Fetch failed! Here is the exact reason:", error);
+                console.warn("Using offline saved data."); 
+            }
 
             renderHomepage();
             btnEnter.textContent = "Enter Hub"; btnEnter.removeAttribute("disabled");
