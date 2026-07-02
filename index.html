@@ -467,7 +467,12 @@
         
         function sanitizeData() {
             if(!globalData.lessons || globalData.lessons.length === 0) globalData.lessons = [...DEFAULT_GLOBAL_DATA.lessons];
-            if(globalData.webhookUrl === undefined) globalData.webhookUrl = "";
+            
+            // FIX #1: If a blank webhook is pulled from LocalStorage or GitHub, fiercely overwrite it with the default.
+            if(!globalData.webhookUrl || globalData.webhookUrl.trim() === "") {
+                globalData.webhookUrl = DEFAULT_GLOBAL_DATA.webhookUrl;
+            }
+
             globalData.lessons.forEach(l => {
                 if(!l.id) l.id = "lesson_" + Date.now() + Math.random().toString(36).substr(2, 5);
                 if(!l.controls) l.controls = { playPause: true, rewind: true, forward: true };
@@ -839,6 +844,9 @@
         document.getElementById('btn-finish').onclick = () => {
             pauseVideo(); 
             
+            // Re-enable the save button just in case it was disabled previously
+            document.getElementById('btn-save-drive').disabled = false;
+            
             const totalPossible = currentActiveLesson.questions.reduce((sum, q) => sum + (Number(q.maxPoints) || 10), 0);
             const percentage = totalPossible > 0 ? Math.round((currentScore / totalPossible) * 100) : 100;
             const passingType = currentActiveLesson.passingRequirementType || 'percent';
@@ -889,6 +897,7 @@
         document.getElementById('btn-cancel-save').onclick = () => document.getElementById('save-modal').classList.add('hidden');
 
         document.getElementById('btn-save-drive').onclick = async () => {
+            const btnSave = document.getElementById('btn-save-drive');
             const sName = document.getElementById('student-name').value.trim();
             const sClass = document.getElementById('student-class').value.trim();
             const statusLabel = document.getElementById('save-status');
@@ -897,6 +906,9 @@
                 statusLabel.textContent = "Please enter Name and Class!"; statusLabel.style.color = "var(--btn-danger)";
                 statusLabel.classList.remove('hidden'); return;
             }
+
+            // FIX #2: Immediately disable the button so the student cannot double-click it.
+            btnSave.disabled = true;
 
             statusLabel.style.color = "var(--accent-glow)"; statusLabel.textContent = "Saving to Server..."; statusLabel.classList.remove('hidden');
             cumulativeScore += currentScore;
@@ -909,11 +921,18 @@
 
             if (globalData.webhookUrl) {
                 try {
-                    await fetch(globalData.webhookUrl, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                    // FIX #3: Changed Content-Type to "text/plain" to bypass Google CORS preflight failures which cause double-pings.
+                    await fetch(globalData.webhookUrl, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(payload) });
                     statusLabel.textContent = "✅ Successfully Saved!"; statusLabel.style.color = "var(--btn-play)";
-                    setTimeout(() => { document.getElementById('save-modal').classList.add('hidden'); document.getElementById('btn-back-home').click(); }, 2000);
+                    setTimeout(() => { 
+                        document.getElementById('save-modal').classList.add('hidden'); 
+                        document.getElementById('btn-back-home').click(); 
+                        btnSave.disabled = false; // reset for the next user
+                    }, 2000);
                     return;
-                } catch(e) {}
+                } catch(e) {
+                    btnSave.disabled = false; // unlock if it fails
+                }
             }
 
             const reportText = `STUDENT SCORE REPORT\nLesson: ${payload.lessonTitle}\nName: ${payload.name}\nClass: ${payload.className}\nScore: ${payload.score} Points (${payload.percentage})\nDate: ${payload.date}`;
@@ -922,7 +941,11 @@
             dl.setAttribute("href", dataStr); dl.setAttribute("download", `${payload.name}_${payload.lessonId}_Report.txt`); dl.click();
 
             statusLabel.textContent = "✅ Report Downloaded!"; statusLabel.style.color = "var(--btn-play)";
-            setTimeout(() => { document.getElementById('save-modal').classList.add('hidden'); document.getElementById('btn-back-home').click(); }, 3000);
+            setTimeout(() => { 
+                document.getElementById('save-modal').classList.add('hidden'); 
+                document.getElementById('btn-back-home').click(); 
+                btnSave.disabled = false;
+            }, 3000);
         };
 
         // --- TEACHER WORKSPACE ---
