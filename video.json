@@ -1,6 +1,6 @@
 {
   "pin": "1037440",
-  "webhookUrl": "",
+  "webhookUrl": "https://script.google.com/macros/s/AKfycbwl0tvckL5jgitzIJts3RonQpPN15oPyAvQtClYOwJQvmJAlkeS0hU5otrPtRnuywqfvQ/exec",
   "lessons": [
     {
       "id": "lesson_1",
