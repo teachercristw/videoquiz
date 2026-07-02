@@ -7,12 +7,12 @@
       "title": "The Colour Monster",
       "videoSource": "BU5RoqHEYZ4",
       "videoType": "youtube",
-      "passingScore": 100,
+      "passingScore": 70,
       "passingRequirementType": "score",
       "controls": {
         "playPause": true,
         "rewind": true,
-        "forward": false
+        "forward": true
       },
       "questions": [
         {
